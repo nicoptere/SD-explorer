@@ -72,3 +72,5 @@ it is recommended to keep 512 in width or height, smaller sizes (say 256\*256) w
 #### app
 
 the JS app is located in src/, you can re-build it with `rollup --config rollup.config.js`
+
+feedbacks welcome :)
