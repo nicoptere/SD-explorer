@@ -1,4 +1,4 @@
-# heaSDhot
+# SD-explorer
 
 #### foreword
 
