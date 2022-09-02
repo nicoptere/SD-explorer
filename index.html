@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+  </head>
+
+  <body>
+    <div id="panel">
+      <div id="settings"></div>
+    </div>
+
+    <div id="drag">
+      <div class="drag-label"></div>
+      <div class="zone-border">
+        <div id="zone">
+          <div id="throbber" class="hidden" draggable="false">
+            <div class="lds-ellipsis">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./assets/index.js"></script>
+
+    <script type="module">
+      window.onload = () => {
+        new index();
+      };
+    </script>
+  </body>
+</html>

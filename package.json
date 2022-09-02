@@ -1,0 +1,34 @@
+{
+  "name": "SD-explorer",
+  "version": "0.0.0",
+  "description": "tool to explore the Stable Diffusion model",
+  "main": "server.js",
+  "scripts": {
+    "sd": "node server.js"
+  },
+  "dependencies": {
+    "@pangenerator/tweakpane-textarea-plugin": "^1.0.4",
+    "death": "^1.1.0",
+    "draggable": "^4.2.0",
+    "eventemitter3": "4.0.7",
+    "express": "4.16.4",
+    "hammerjs": "2.0.8",
+    "pytalk-2": "2.0.0",
+    "socket.io": "4.5.1",
+    "tweakpane": "3.1.0",
+    "@tweakpane/plugin-essentials": "^0.1.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.13",
+    "@babel/preset-env": "^7.18.10",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.2",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "babel": "^6.23.0",
+    "rollup": "^2.79.0",
+    "rollup-plugin-terser": "7.0.2",
+    "socket.io-client": "^4.5.1"
+  },
+  "author": "Nicolas Barradeau",
+  "license": "MIT"
+}
