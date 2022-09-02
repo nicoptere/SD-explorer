@@ -23264,7 +23264,7 @@ var index = (function () {
       // tabs common options
 
       const seed = {
-        value: 4096,
+        value: -1,
         min: -1,
         max: 10000,
         step: 1,
@@ -23376,7 +23376,8 @@ var index = (function () {
       this.addMenu(this.settings, pane);
 
       //randomizes the prompts
-      Prompter.filter("portrait"); //
+      // Prompter.filter("portrait"); //
+      Prompter.randomize();
       this.inference.field.value = Prompter.random();
       this.img2img.field.value = Prompter.random();
       this.inpainting.seed = -1;
