@@ -20,7 +20,11 @@ you'll find all the background information and interactive exampless on the [hug
 - Python 3.X (I use 3.9.5 on Windows) + PIP
 - NodeJS and NPM
 
-in other words: if you manage to run the [huggingface diffusers](https://github.com/huggingface/diffusers) locally, from a CLI, you should be good to go.
+in other words:
+
+if you manage to run the [huggingface diffusers](https://github.com/huggingface/diffusers) locally, from a CLI, you should be good to go.
+
+if not, I can't be of any help as the setup varies immensely between machines.
 
 #### run!
 
@@ -45,18 +49,25 @@ the thing works on a fullscreen 2D canvas and the draggable red rectangle is the
 
 #### inference
 
-the **inference** button creates an image "from scratch" given a number of _steps_ (think of it as a level of detail) and a _guidance rate_ (think of it as the 'fidelity' to the prompt).
+the **inference** tab creates an image "from scratch" given a number of _steps_ (think of it as a level of detail) and a _guidance rate_ (think of it as the 'fidelity' to the prompt).
 higher **steps** count takes longer but provides more qualitative images, lower steps count computes faster but are usually blurry as f.
 **guidance** doesn't impact the computation time, lower guidance rate will take more _risks_ (same goes for the img2img)
 by default the **seed** is set to -1 which means that for each call, the _generator_ will be randomize, if you set it to a given number, the model will always produce the same image unless you change on of the parameters.
 
 #### image to image
 
-the **img2img** button _crops_ the rectangle from the main canvas and _drives_ it towards the prompt at a given _strength_ (**guidance** and **seed** work as above)_._
+the **img2img** tab _crops_ the rectangle from the main canvas and _drives_ it towards the prompt at a given _strength_ (**guidance** and **seed** work as above)_._
 that's where the **undo** button shines, it is very hard to tune...
 
-note on size
-it is recommended to keep 512 in width or height, smaller sizes (say 256\*256) won't give good results (they'll be oversaturated).
+#### inpainting
+
+the **inpainting** tab works a bit like the image to image. the difference is that you need to draw a mask in the zone.
+the mask is sent alongt the source image and the model will only _drive_ the painted area towards the prompt.
+there are 3 extra params on this tab: **size**, the brush size, **softness**, the _strength_ of the brush gradient and **alpha**, the opacity of the stroke. this is a rather incredible feature when you get used to it (addictive too).
+
+#### size
+
+it is recommended to keep 512 in width or height, smaller sizes (say 256\*256) won't give good results (they'll be oversaturated). it is recommended to keep 512 in width or height, smaller sizes (say 256*256) won't give good results (they'll be oversaturated). I limited the rect to 512*512 as it may become impossible for Node to receive Blobs bigger than that...
 
 #### app
 
