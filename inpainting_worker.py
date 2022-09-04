@@ -78,17 +78,17 @@ def inpainting(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
     img_name = img_name.replace(' ', '-')
 
     # no need to compute, return image path
-    if os.path.exists(img_name) and seed != -1:
-        if DEBUG == True:
-            print("image already exists")
-        return img_name
-    else:
-        if DEBUG == True:
-            print("compute new image: ")
-            print("\t prompt: ", prompt)
-            print("\t strength: ", strength)
-            print("\t guidance: ", guidance)
-            # print("\t img_name: ", img_name)
+    # if os.path.exists(img_name) and seed != -1:
+    #     if DEBUG == True:
+    #         print("image already exists")
+    #     return img_name
+    # else:
+    if DEBUG == True:
+        print("compute new image: ")
+        print("\t prompt: ", prompt)
+        print("\t strength: ", strength)
+        print("\t guidance: ", guidance)
+        # print("\t img_name: ", img_name)
 
     # perform image 2 image
     with autocast("cuda"):

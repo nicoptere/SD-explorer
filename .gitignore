@@ -4,3 +4,7 @@ img2img
 inpainting
 trash
 package-lock.json
+
+src/Test.js
+src/js/Drawing.js
+src/three

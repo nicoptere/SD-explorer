@@ -76,6 +76,7 @@ function callInference(data) {
   // call the python method
   inference(prompt, steps, guidance, seed, width, height, (error, res) => {
     if (callBackCount++ == 0) {
+      // TODO improve error handling + unify callback
       if (debug) {
         console.log("node: inference error", error);
         console.log("node: inference callback");

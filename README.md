@@ -67,7 +67,7 @@ there are 3 extra params on this tab: **size**, the brush size, **softness**, th
 
 #### size
 
-it is recommended to keep 512 in width or height, smaller sizes (say 256\*256) won't give good results (they'll be oversaturated). it is recommended to keep 512 in width or height, smaller sizes (say 256*256) won't give good results (they'll be oversaturated). I limited the rect to 512*512 as it may become impossible for Node to receive Blobs bigger than that...
+it is recommended to keep 512 in width or height, smaller sizes (say 256*256) won't give good results (they'll be oversaturated). I limited the rect to 512*512 as it may become impossible for Node to receive Blobs bigger than that...
 
 #### app
 

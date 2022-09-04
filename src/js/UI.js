@@ -7,138 +7,148 @@ import Draggable from "draggable";
 import { CONFIG } from "./Config";
 let pane;
 export default class UI extends EventEmitter {
-  constructor() {
+  constructor(panelId = "#SDExplorer") {
     super();
 
-    const panel = document.querySelector("#panel");
+    const panel = document.querySelector(panelId);
+
     new Draggable(panel, {
       filterTarget: (e) => {
         return e == panel;
       },
     });
 
-    const container = document.querySelector("#settings");
+    const container = panel.querySelector(".settings-contents");
     pane = new Pane({ container });
     pane.registerPlugin(TextareaPlugin);
     pane.registerPlugin(EssentialsPlugin);
 
-    const tab = pane.addTab({
-      pages: [
-        { title: "inference" },
-        { title: "img2img" },
-        { title: "inpainting" },
-      ],
-    });
+    // tabs default options
+
+    const seed = CONFIG.settings.options.seed;
+    const steps = CONFIG.settings.options.steps;
+    const strength = CONFIG.settings.options.strength;
+    const guidance = CONFIG.settings.options.guidance;
+    const brush_size = CONFIG.settings.options.brush_size;
+    const zone_size = CONFIG.settings.options.zone_size;
+    const canvas_size = CONFIG.settings.options.canvas_size;
+    const unit = CONFIG.settings.options.unit;
+
+    // tabs
     this.tabIndex = 0;
-    tab.on("select", (e) => {
-      this.tabIndex = e.index;
-      this.emit("tab_change", e.index);
-    });
+    const tab = pane
+      .addTab({
+        pages: [
+          { title: "inference" },
+          { title: "img2img" },
+          { title: "inpainting" },
+        ],
+      })
+      .on("select", (e) => {
+        this.tabIndex = e.index;
+        this.emit("tab_change", e.index);
+      });
 
-    // tabs common options
-
-    const seed = {
-      value: -1,
-      min: -1,
-      max: 10000,
-      step: 1,
-    };
-    const steps = {
-      value: 40,
-      min: 10,
-      max: 100,
-      step: 1,
-    };
-    const strength = {
-      value: 0.65,
-      min: 0,
-      max: 1,
-      step: 0.01,
-    };
-    const guidance = {
-      value: 7,
-      min: 0,
-      max: 25,
-      step: 0.01,
-    };
-    const brush_size = {
-      value: 96,
-      min: 1,
-      max: 256,
-      step: 1,
-    };
-
+    // params
+    this.clipboard = "";
     this.inference = {
       prompt: "",
-      randomize: () => {
-        this.emit("randomize", this.inference);
+      prompt_actions: {
+        type: "grid",
+        randomize: () => {
+          this.emit("randomize", this.inference);
+        },
+        copy: () => {
+          this.clipboard = this.inference.field.value;
+        },
+        paste: () => {
+          this.inference.field.value = this.clipboard;
+        },
       },
       seed,
       steps,
       guidance,
-      compute: () => {
-        this.emit("inference", this.inference);
-      },
-      undo: () => {
-        this.emit("undo");
+      actions: {
+        type: "grid",
+        compute: () => {
+          this.emit("inference", this.inference);
+        },
+        undo: () => {
+          this.emit("undo");
+        },
       },
     };
 
     this.img2img = {
       prompt: "",
-      randomize: () => {
-        this.emit("randomize", this.img2img);
+      prompt_actions: {
+        type: "grid",
+        randomize: () => {
+          this.emit("randomize", this.img2img);
+        },
+        copy: () => {
+          this.clipboard = this.img2img.field.value;
+        },
+        paste: () => {
+          this.img2img.field.value = this.clipboard;
+        },
       },
       seed,
       strength,
       guidance,
       // brush_size,
       // color: "#ff0055ff",
-      compute: () => {
-        this.emit("img2img", this.img2img);
-      },
-      undo: () => {
-        this.emit("undo");
+      actions: {
+        type: "grid",
+        compute: () => {
+          this.emit("img2img", this.img2img);
+        },
+        undo: () => {
+          this.emit("undo");
+        },
       },
     };
 
     this.inpainting = {
       prompt: "",
-      randomize: () => {
-        this.emit("randomize", this.inpainting);
+      prompt_actions: {
+        type: "grid",
+        randomize: () => {
+          this.emit("randomize", this.inpainting);
+        },
+        copy: () => {
+          this.clipboard = this.inpainting.field.value;
+        },
+        paste: () => {
+          this.inpainting.field.value = this.clipboard;
+        },
       },
       seed,
       strength,
       guidance,
+      actions: {
+        type: "grid",
+        compute: () => {
+          this.emit("inpainting", this.inpainting);
+        },
+        undo: () => {
+          this.emit("undo");
+        },
+      },
       brush_size,
-      softness: strength, // strength is 0->1 so ...
-      alpha: strength,
-      compute: () => {
-        this.emit("inpainting", this.inpainting);
-      },
-      undo: () => {
-        this.emit("undo");
-      },
-      clear_drawpad: () => {
+      softness: unit,
+      alpha: unit,
+      clear: () => {
         this.emit("clear_drawpad");
       },
-    };
-
-    this.settings = {
-      width: {
-        value: 512,
-        min: 64,
-        max: 512,
-        step: 64,
-      },
-      height: {
-        value: 512,
-        min: 64,
-        max: 512,
-        step: 64,
-      },
-      clear: () => {
-        this.emit("clear");
+      mode: {
+        type: "radio",
+        draw: () => {
+          this.emit("draw_mode", "draw");
+        },
+        erase: () => {
+          this.emit("draw_mode", "erase");
+        },
       },
     };
 
@@ -146,60 +156,64 @@ export default class UI extends EventEmitter {
     this.addMenu(this.inference, tab.pages[0]);
     this.addMenu(this.img2img, tab.pages[1]);
     this.addMenu(this.inpainting, tab.pages[2]);
-    pane.addSeparator();
-    this.addMenu(this.settings, pane);
 
-    //randomizes the prompts
-    // Prompter.filter("portrait"); //
-    Prompter.randomize();
-    this.inference.field.value = Prompter.random();
-    this.img2img.field.value = Prompter.random();
-    this.inpainting.seed = -1;
-    this.inpainting.field.value = Prompter.random();
-    this.inpainting.alpha = 1;
+    //zone settings
+    this.zone = {
+      width: zone_size,
+      height: zone_size,
+    };
+    pane.addSeparator();
+    const zone = pane.addFolder({ title: "zone", expanded: true });
+    this.addMenu(this.zone, zone);
+
+    //canvas settings
+    this.canvas = {
+      width: canvas_size,
+      height: canvas_size,
+      color: "rgba(214,214,214,1)",
+      grain: unit,
+      actions: {
+        type: "grid",
+        clear: () => {
+          this.emit("clear");
+        },
+        save: () => {
+          this.emit("save");
+        },
+      },
+    };
+    this.canvas.grain.value = 0.0;
+    pane.addSeparator();
+    const canvas = pane.addFolder({ title: "canvas" });
+    this.addMenu(this.canvas, canvas);
+
+    //filter & randomizes the prompts
+    if (CONFIG.settings.promptKeyword != null) {
+      Prompter.filter(CONFIG.settings.promptKeyword); //
+    }
+    this.inference.field.value = Prompter.next();
+    this.img2img.field.value = Prompter.next();
+    this.inpainting.field.value = Prompter.next();
+    if (CONFIG.settings.randomizePrompts === true) {
+      Prompter.randomize();
+      this.inference.field.value = Prompter.random();
+      this.img2img.field.value = Prompter.random();
+      this.inpainting.field.value = Prompter.random();
+    }
+
+    // maximize all controls width ( hacky hacky...)
+    const els = document.querySelectorAll(".tp-lblv_v");
+    for (let i = 0; i < els.length; i++) {
+      els[i].style.flexGrow = 2;
+    }
 
     pane.refresh();
-
-    //keyboard
-    window.addEventListener("keydown", (e) => {
-      //prevents shortcuts when editing text
-      const f0 = this.inference.field === document.activeElement;
-      const f1 = this.img2img.field === document.activeElement;
-      const f2 = this.inpainting.field === document.activeElement;
-      const focus = f0 || f1 || f2;
-
-      if (focus) return;
-      switch (CONFIG.keymap[e.key]) {
-        case "z":
-          if (e.ctrlKey) this.emit("undo");
-          break;
-
-        case "compute-inference":
-          this.emit("inference", this.inference);
-          break;
-        case "compute-img2img":
-          this.emit("img2img", this.img2img);
-          break;
-        case "compute-inpainting":
-          this.emit("inpainting", this.inpainting);
-          break;
-
-        case "randomize-inference":
-          this.emit("randomize", this.inference);
-          break;
-        case "randomize-img2img":
-          this.emit("randomize", this.img2img);
-          break;
-        case "randomize-inpainting":
-          this.emit("randomize", this.inpainting);
-          break;
-      }
-    });
+    this.addKeyboardShortcuts();
   }
 
   getConfig(object) {
     let cfg = Object.assign({}, object);
-    cfg = Object.assign(cfg, this.settings);
+    cfg = Object.assign(cfg, this.zone);
     cfg.prompt = object.field.value.trim();
     //clean up
     for (let key in cfg) {
@@ -210,7 +224,20 @@ export default class UI extends EventEmitter {
     return cfg;
   }
 
+  getShortcut(folder, key) {
+    let shortcut = "";
+    if (
+      CONFIG.settings.keymap[folder.title] != undefined &&
+      CONFIG.settings.keymap[folder.title][key] != undefined
+    ) {
+      shortcut = " (" + CONFIG.settings.keymap[folder.title][key] + ")";
+    }
+    return shortcut;
+  }
+
   addMenu(object, folder) {
+    // console.log("create menu for ", folder);
+
     // expose the sliders (to the drawingPad for instance)
     const bindings = {};
     for (let key in object) {
@@ -225,36 +252,136 @@ export default class UI extends EventEmitter {
         //
         // store a path to the input textarea !!! ( holy shit )
         object.field = field.controller_.valueController.view.inputElement;
-        // (grow the textarea width) hacky hacky...
-        object.field.parentNode.parentNode.style.flexGrow = "3";
         //
         //
       } else if (typeof object[key] === "function") {
         const btn = folder.addButton({
-          title: key,
+          title: key + this.getShortcut(folder, key),
+          label: "",
         });
         btn.on("click", () => {
           object[key]();
         });
       } else if (key === "color") {
         const color = folder.addInput(object, "color", {
-          picker: "inline",
-          expanded: true,
+          // picker: "inline",
+          // expanded: true,
         });
         bindings[key] = color;
       } else {
-        let props = object[key];
-        object[key] = object[key].value;
-        const field = folder.addInput(object, key, props);
-        if (key == "width" || key == "height") {
-          field.on("change", (e) => {
-            this.emit("resize");
-          });
+        switch (object[key].type) {
+          case "grid":
+            //buttons list
+            delete object[key].type;
+            this.buttonGrid(folder, object[key]);
+            break;
+          case "radio":
+            //radio nbuttons
+            delete object[key].type;
+            this.buttonGrid(folder, object[key]);
+            // this.radioButtons(object, key, folder, object[key]);
+            break;
+          default:
+            let props = object[key];
+            object[key] = object[key].value;
+            const field = folder.addInput(object, key, props);
+            bindings[key] = field;
+            break;
         }
-        bindings[key] = field;
       }
     }
     object.bindings = bindings;
     return folder;
+  }
+
+  buttonGrid(folder, params) {
+    const names = [];
+    const methods = [];
+    for (let key in params) {
+      let shortcut = this.getShortcut(folder, key);
+      names.push(key + shortcut);
+      methods.push(params[key]);
+    }
+    folder
+      .addBlade({
+        view: "buttongrid",
+        size: [names.length, 1],
+        cells: (i, j) => ({
+          title: names[i],
+        }),
+        label: "",
+      })
+      .on("click", (ev) => {
+        methods[ev.index[0]]();
+      });
+  }
+
+  radioButtons(object, key, parent, params) {
+    const names = [];
+    const values = [];
+    let i = 0;
+    const methods = [];
+    for (let key in params) {
+      names.push(key);
+      methods.push(params[key]);
+      values.push(i++);
+    }
+    object[key] = 1;
+    const group = parent
+      .addInput(object, key, {
+        view: "radiogrid",
+        groupName: key,
+        size: [names.length, 1],
+        cells: (i, j) => ({
+          title: names[i],
+          value: values[i],
+        }),
+        label: key,
+      })
+      .on("change", (ev) => {
+        console.log("click", ev.value);
+        methods[ev.value]();
+      });
+    group.value = 0;
+    return group;
+  }
+
+  //keyboard
+  addKeyboardShortcuts() {
+    window.addEventListener("keydown", (e) => {
+      //prevents shortcuts when editing text
+      const f0 = this.inference.field === document.activeElement;
+      const f1 = this.img2img.field === document.activeElement;
+      const f2 = this.inpainting.field === document.activeElement;
+      const focus = f0 || f1 || f2;
+
+      if (focus) return;
+      switch (e.key) {
+        case "z":
+          if (e.ctrlKey) this.emit("undo");
+          break;
+
+        case CONFIG.settings.keymap.inference.compute:
+          this.emit("inference", this.inference);
+          break;
+        case CONFIG.settings.keymap.inference.randomize:
+          this.emit("randomize", this.inference);
+          break;
+
+        case CONFIG.settings.keymap.img2img.compute:
+          this.emit("img2img", this.img2img);
+          break;
+        case CONFIG.settings.keymap.img2img.randomize:
+          this.emit("randomize", this.img2img);
+          break;
+
+        case CONFIG.settings.keymap.inpainting.compute:
+          this.emit("inpainting", this.inpainting);
+          break;
+        case CONFIG.settings.keymap.inpainting.randomize:
+          this.emit("randomize", this.inpainting);
+          break;
+      }
+    });
   }
 }

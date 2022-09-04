@@ -1,10 +1,12 @@
 
+from ast import Import
 import torch
 from torch import autocast
 import os
 
 # inference
-from diffusers import StableDiffusionPipeline
+# from diffusers import StableDiffusionPipeline
+from inference import StableDiffusionPipeline
 
 # creates a folder to store the images
 ROOT_FOLDER = "inference/"

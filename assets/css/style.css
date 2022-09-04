@@ -4,12 +4,10 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
   background-image: url("../images/background.jpg");
-  z-index: -2;
 }
 
-#panel {
+.settings-draggable {
   background-color: #4b4b4b;
   background-image: url("../svg/move-white.svg");
   background-size: 16px 16px;
@@ -19,7 +17,6 @@ body {
   z-index: 100000;
   display: block;
   width: 320px;
-  height: 24px;
   color: #000;
   padding-top: 24px;
   position: absolute;
@@ -27,17 +24,17 @@ body {
   top: 16px;
   left: 16px;
 }
-#settings {
+.settings-contents {
   cursor: auto;
   user-select: none;
 }
 
-canvas {
-  /* pointer-events: none; */
+.main-canvas {
+  pointer-events: none;
   position: absolute;
-  top: 0;
-  left: 0;
-  transition-property: all 0.5 ease-out;
+  /* top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
 }
 .fade-in {
   opacity: 1;
@@ -45,12 +42,12 @@ canvas {
 .fade-out {
   opacity: 0;
 }
+
 #drag {
   z-index: 10000;
   position: absolute;
   top: 50%;
   left: 50%;
-  /* background-color: rgba(0, 0, 0, 0.65); */
   transform: translate(-50%, -50%);
   cursor: move;
   border: 16px;
@@ -66,6 +63,7 @@ canvas {
   background-position: 4px 4px;
   background-repeat: no-repeat;
 }
+
 #zone {
   position: relative;
   cursor: auto;
@@ -74,7 +72,7 @@ canvas {
   height: 512px;
 }
 .zone-border {
-  border: 1px dotted #ff0000;
+  border: 1px dashed #ff0000;
   display: block;
   width: auto;
   height: auto;
@@ -150,7 +148,13 @@ canvas {
 }
 /* from https://loading.io/css/ */
 
-/* :root {
+/* tweakpane */
+:root {
+  --font-family: Comics Sans;
+}
+
+/*
+:root {
   --tp-base-background-color: hsla(40, 3%, 90%, 1);
   --tp-base-shadow-color: hsla(0, 0%, 0%, 0.3);
   --tp-button-background-color: hsla(40, 3%, 70%, 1);
@@ -172,4 +176,5 @@ canvas {
   --tp-label-foreground-color: hsla(40, 3%, 50%, 1);
   --tp-monitor-background-color: hsla(120, 3%, 20%, 1);
   --tp-monitor-foreground-color: hsla(120, 40%, 60%, 0.8);
-} */
+}
+//*/

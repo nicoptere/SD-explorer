@@ -1,8 +1,6 @@
 import Hammer from "hammerjs";
-function lerp(t, a, b) {
-  return a * (1 - t) + b * t;
-}
-
+// TODO:
+// free drawing on the image => isolate mask blobs => send in bacth to inpainting
 export default class DrawingPad {
   constructor(settings) {
     this.ctx = this.getContext(512, 512);
