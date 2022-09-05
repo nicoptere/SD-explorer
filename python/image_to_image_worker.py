@@ -8,7 +8,7 @@ import numpy as np
 from python.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 
 # creates a folder to store the images
-ROOT_FOLDER = "img2img/"
+ROOT_FOLDER = "results/img2img/"
 os.makedirs(ROOT_FOLDER, exist_ok=True)
 
 pipe = None

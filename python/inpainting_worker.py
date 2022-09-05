@@ -8,7 +8,7 @@ import numpy as np
 from python.inpainting import StableDiffusionInpaintingPipeline
 
 # creates a folder to store the images
-ROOT_FOLDER = "inpainting/"
+ROOT_FOLDER = "results/inpainting/"
 os.makedirs(ROOT_FOLDER, exist_ok=True)
 
 pipe = None

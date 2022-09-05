@@ -8,8 +8,10 @@ import os
 from python.inference import StableDiffusionPipeline
 
 # creates a folder to store the images
-ROOT_FOLDER = "inference/"
+ROOT_FOLDER = "results/inference/"
 os.makedirs(ROOT_FOLDER, exist_ok=True)
+
+os.makedirs('results/tmp', exist_ok=True)
 
 pipe = None
 SEED = -1
