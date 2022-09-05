@@ -58,11 +58,24 @@ export default class SDExplorer {
           //push to history
           history.pushState(image, rect);
         };
-        image.setAttribute("src", data.value);
+        console.log(data.value);
+        image.setAttribute("src", data.value.replace("results", "")); //TODO fix
       } else {
         // TODO handle errors ( => Console)
       }
 
+      region.hideThrobber();
+      locked = false;
+    });
+
+    socket.on("upscale_ready", (data) => {
+      if (data.error == false) {
+        const upscale = document.getElementById("upscale");
+        upscale.setAttribute("src", null); //TODO fix
+        upscale.setAttribute("src", data.value.replace("results", "")); //TODO fix
+      } else {
+        // TODO handle errors ( => Console)
+      }
       region.hideThrobber();
       locked = false;
     });
@@ -91,7 +104,9 @@ export default class SDExplorer {
     // check if we can proceed
     const isReady = (object) => {
       const config = ui.getConfig(object);
-      if (config.prompt.trim() === "") return false;
+      if (config.prompt != undefined && config.prompt.trim() === "") {
+        return false;
+      }
       if (locked) return false;
       locked = true;
       return true;
@@ -114,7 +129,7 @@ export default class SDExplorer {
       crop.toBlob(
         (blob) => {
           // tell node to save to disk
-          socket.emit("save_image", "img2img/i2i-tmp.jpg", blob);
+          socket.emit("save_image", "results/tmp/i2i-tmp.jpg", blob);
           //once it's saved, call the img2img
           socket.once("on_image_saved", () => {
             socket.emit("image_image", ui.getConfig(object));
@@ -136,14 +151,14 @@ export default class SDExplorer {
       crop.toBlob(
         (blob) => {
           // tell node to save to disk
-          socket.emit("save_image", "inpainting/inp-tmp.jpg", blob);
+          socket.emit("save_image", "results/tmp/inp-tmp.jpg", blob);
           // when the source is saved,
           socket.once("on_image_saved", () => {
             //  save the mask
             drawPad.canvas.toBlob(
               (blob) => {
                 // tell node to save to disk
-                socket.emit("save_image", "inpainting/inp-msk.jpg", blob);
+                socket.emit("save_image", "results/tmp/inp-msk.jpg", blob);
                 //
                 //once the mask is saved, call the inpainting
                 socket.once("on_image_saved", () => {
@@ -157,6 +172,27 @@ export default class SDExplorer {
               "image/jpeg",
               JPG_QUALITY
             );
+          });
+        },
+        "image/jpeg",
+        JPG_QUALITY
+      );
+    });
+
+    //upscale
+    //save the cropped image and call the upscale function:
+    ui.on("upscale", (object) => {
+      if (!isReady(object)) return;
+      // crop and convert to Blob
+      const crop = canvas.crop(this.source, region.rect);
+      crop.toBlob(
+        (blob) => {
+          // tell node to save to disk
+          socket.emit("save_image", "results/tmp/upscale-tmp.jpg", blob);
+          //once it's saved, call the img2img
+          socket.once("on_image_saved", () => {
+            socket.emit("upscale", ui.getConfig(object));
+            region.showThrobber();
           });
         },
         "image/jpeg",

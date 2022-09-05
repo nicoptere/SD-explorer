@@ -18,7 +18,7 @@ io.on("connection", function (socket) {
   SOCKET.on("image_image", callImage2Image);
   SOCKET.on("inpainting", callInpainting);
   SOCKET.on("save_image", saveImage);
-  // SOCKET.on("upscale", callUpscale);//TODO
+  SOCKET.on("upscale", callUpscale);
 });
 
 // server setup
@@ -43,13 +43,16 @@ app.listen(PORT, IP || "localhost", () => {
 
 // app.use(express.static("public"));
 //this is where the images will be generated ( set in "inference.py" )
-app.use("/inference", express.static("inference"));
+app.use("/inference", express.static("results/inference"));
 
 //this is where the image2image will be generated ( set in "img2img.py" )
-app.use("/img2img", express.static("img2img"));
+app.use("/img2img", express.static("results/img2img"));
 
 //this is where the inpainting will be generated ( set in "inpainting.py" )
-app.use("/inpainting", express.static("inpainting"));
+app.use("/inpainting", express.static("results/inpainting"));
+
+//this is where the inpainting will be generated ( set in "inpainting.py" )
+app.use("/upscale", express.static("results/upscale"));
 
 // this saves the image region sent from the client to disk (used by img2img and inpainting )
 function saveImage(name, blob) {
@@ -149,6 +152,39 @@ function callInpainting(data) {
 
   // call image ot image
   inpainting(prompt, strength, guidance, seed, width, height, onComplete);
+}
+
+// upsale
+
+let upscale_worker = pytalk.worker("python/upscale_worker.py");
+let upscale = upscale_worker.method("upscale");
+function callUpscale(data) {
+  if (debug) console.log("node: upscale data", data);
+
+  //lock
+  if (BUSY) return;
+  BUSY = true;
+  callBackCount = 0;
+
+  // parse parameters
+  const name = data.name;
+  const face = data.enhance_face;
+  const scale = data.scale;
+  const model = data.model;
+
+  // call image ot image
+  upscale(name, face, scale, model, onUpscaleComplete);
+}
+function onUpscaleComplete(error, value) {
+  if (callBackCount++ == 0) {
+    // TODO improve error handling + unify callback
+    if (debug) {
+      console.log("node: inference error?", error);
+    }
+    SOCKET.emit("upscale_ready", { error, value });
+    // unlock
+    BUSY = false;
+  }
 }
 
 // forces the process to quit (on Windows, it sometimes refuses to DIE!! )

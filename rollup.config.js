@@ -30,6 +30,6 @@ export default {
     }),
 
     // minification
-    terser(),
+    // terser(),
   ],
 };

@@ -23,8 +23,11 @@ def sanitize(text):
 
 
 @pytalk_method('upscale')
-def upscale(input, face_enhance=True, model_name='RealESRGAN_x4plus', outscale=4):
-    print(input, face_enhance, model_name, outscale)
+def upscale(name, face_enhance=True, outscale=4, model_name='RealESRGAN_x4plus'):
+
+    face_enhance = bool(face_enhance)
+    outscale = int(outscale)
+    input = "results/tmp/upscale-tmp.jpg"
 
     output = ROOT_FOLDER
     suffix = ""
@@ -68,6 +71,7 @@ def upscale(input, face_enhance=True, model_name='RealESRGAN_x4plus', outscale=4
         #     'python/realesrgan/weights', model_name + '.pth')
 
         # download the X4 model
+        print("download model")
         url = 'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth'
         r = requests.get(url, stream=True)
         if r.status_code == 200:
@@ -116,70 +120,72 @@ def upscale(input, face_enhance=True, model_name='RealESRGAN_x4plus', outscale=4
             img_mode = None
 
         image = None
-        try:
-            if face_enhance:
-                _, _, image = face_enhancer.enhance(
-                    img, has_aligned=False, only_center_face=False, paste_back=True)
-            else:
-                image, _ = upsampler.enhance(img, outscale=outscale)
-
-        except RuntimeError as error:
-            print('Error', error)
-            print(
-                'If you encounter CUDA out of memory, try to set --tile with a smaller number.')
+        # try:
+        if face_enhance:
+            _, _, image = face_enhancer.enhance(
+                img, has_aligned=False, only_center_face=False, paste_back=True)
         else:
-            if ext == 'auto':
-                extension = extension[1:]
-            else:
-                extension = ext
-            if img_mode == 'RGBA':  # RGBA images should be saved in png format
-                extension = 'png'
-            save_path = os.path.join(
-                output, '%s%s.%s' % (imgname, suffix, extension))
-            print()
-            cv2.imwrite(save_path, image)
+            image, _ = upsampler.enhance(img, outscale=outscale)
 
-    """Inference demo for Real-ESRGAN.
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input', type=str,
-                        default='inputs', help='Input image or folder')
-    parser.add_argument(
-        '-n',
-        '--model_name',
-        type=str,
-        default='RealESRGAN_x4plus',
-        help=('Model names: RealESRGAN_x4plus | RealESRNet_x4plus | RealESRGAN_x4plus_anime_6B | RealESRGAN_x2plus | '
-              'realesr-animevideov3'))
-    parser.add_argument('-o', '--output', type=str,
-                        default='results', help='Output folder')
-    parser.add_argument('-s', '--outscale', type=float, default=4,
-                        help='The final upsampling scale of the image')
-    parser.add_argument('--suffix', type=str, default='out',
-                        help='Suffix of the restored image')
-    parser.add_argument('-t', '--tile', type=int, default=0,
-                        help='Tile size, 0 for no tile during testing')
-    parser.add_argument('--tile_pad', type=int,
-                        default=10, help='Tile padding')
-    parser.add_argument('--pre_pad', type=int, default=0,
-                        help='Pre padding size at each border')
-    parser.add_argument('--face_enhance', action='store_true',
-                        help='Use GFPGAN to enhance face')
-    parser.add_argument(
-        '--fp32', action='store_true', help='Use fp32 precision during inference. Default: fp16 (half precision).')
-    parser.add_argument(
-        '--alpha_upsampler',
-        type=str,
-        default='realesrgan',
-        help='The upsampler for the alpha channels. Options: realesrgan | bicubic')
-    parser.add_argument(
-        '--ext',
-        type=str,
-        default='auto',
-        help='Image extension. Options: auto | jpg | png, auto means using the same extension as inputs')
-    parser.add_argument(
-        '-g', '--gpu-id', type=int, default=None, help='gpu device to use (default=None) can be 0,1,2 for multi-gpu')
+        # except RuntimeError as error:
+        #     print('Error', error)
+        #     print(
+        #         'If you encounter CUDA out of memory, try to set --tile with a smaller number.')
+        # else:
+        if ext == 'auto':
+            extension = extension[1:]
+        else:
+            extension = ext
+        if img_mode == 'RGBA':  # RGBA images should be saved in png format
+            extension = 'png'
+        save_path = os.path.join(
+            output, '%s%s.%s' % (name, suffix, extension))
 
-    args = parser.parse_args()
+        cv2.imwrite(save_path, image)
+        return save_path
+
+
+"""Inference demo for Real-ESRGAN.
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--input', type=str,
+                    default='inputs', help='Input image or folder')
+parser.add_argument(
+    '-n',
+    '--model_name',
+    type=str,
+    default='RealESRGAN_x4plus',
+    help=('Model names: RealESRGAN_x4plus | RealESRNet_x4plus | RealESRGAN_x4plus_anime_6B | RealESRGAN_x2plus | '
+            'realesr-animevideov3'))
+parser.add_argument('-o', '--output', type=str,
+                    default='results', help='Output folder')
+parser.add_argument('-s', '--outscale', type=float, default=4,
+                    help='The final upsampling scale of the image')
+parser.add_argument('--suffix', type=str, default='out',
+                    help='Suffix of the restored image')
+parser.add_argument('-t', '--tile', type=int, default=0,
+                    help='Tile size, 0 for no tile during testing')
+parser.add_argument('--tile_pad', type=int,
+                    default=10, help='Tile padding')
+parser.add_argument('--pre_pad', type=int, default=0,
+                    help='Pre padding size at each border')
+parser.add_argument('--face_enhance', action='store_true',
+                    help='Use GFPGAN to enhance face')
+parser.add_argument(
+    '--fp32', action='store_true', help='Use fp32 precision during inference. Default: fp16 (half precision).')
+parser.add_argument(
+    '--alpha_upsampler',
+    type=str,
+    default='realesrgan',
+    help='The upsampler for the alpha channels. Options: realesrgan | bicubic')
+parser.add_argument(
+    '--ext',
+    type=str,
+    default='auto',
+    help='Image extension. Options: auto | jpg | png, auto means using the same extension as inputs')
+parser.add_argument(
+    '-g', '--gpu-id', type=int, default=None, help='gpu device to use (default=None) can be 0,1,2 for multi-gpu')
+
+args = parser.parse_args()
 
 if __name__ == "__main__":
     url = "inference/inf-beautiful-cyberpunk-portrait-by-Liam-Wong-and-Ross-Tran,-artstation,-dark,-contrasting,-noir_40_7.34_3260_384_512.png"
