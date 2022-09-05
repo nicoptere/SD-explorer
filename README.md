@@ -55,7 +55,7 @@ the concept is to generate images using using text written in natural language: 
 
 you can write them inside the textareas or press the **randomize** button below to use the built in prompts list from [Prompt Parrot! 🦜](https://colab.research.google.com/drive/1GtyVgVCwnDfRvfsHbeU0AlG-SgQn1p8e?usp=sharing#scrollTo=gbfhp-raJgPH) to quickly check various styles and configs.
 
-the app works with a single 2D canvas and the draggable red rectangle is the "zone" that will be processed by Python. this allows for interesting and intuitive edition capabilities: start with an inference, then inptaint a larger area, then use image to image on portions of the resulting composition, rinse and repeat.
+the app works with a single 2D canvas and the draggable red rectangle is the "region" that will be processed by Python. this allows for interesting and intuitive edition capabilities: start with an inference, then inptaint a larger area, then use image to image on portions of the resulting composition, rinse and repeat.
 
 #### inference
 
@@ -71,11 +71,11 @@ that's where the **undo** button shines, it is very hard to tune...
 
 #### inpainting
 
-the **inpainting** tab works a bit like the image to image. the difference is that you need to draw a mask in the zone.
+the **inpainting** tab works a bit like the image to image. the difference is that you need to draw a mask in the region.
 the mask is sent alongt the source image and the model will only _drive_ the painted area towards the prompt.
 there are 3 extra params on this tab: **size**, the brush size, **softness**, the _strength_ of the brush gradient and **alpha**, the opacity of the stroke. this is a rather incredible feature when you get used to it (addictive too).
 
-#### zone size
+#### region size
 
 it is recommended to keep 512 in width or height, smaller sizes (say 256*256) won't give good results (they'll be oversaturated). I limited the rect to 512*512 as it may become impossible for Node to receive Blobs bigger than that.
 

@@ -4,10 +4,10 @@ import DrawingPad from "./js/DrawingPad";
 import History from "./js/History";
 import { Prompter } from "./js/Prompter";
 import UI from "./js/UI";
-import Zone from "./js/Zone";
+import Region from "./js/Region";
 import saveAs from "file-saver";
 
-let canvas, socket, zone, ui, history, drawPad;
+let canvas, socket, region, ui, history, drawPad;
 
 let locked = false;
 const JPG_QUALITY = 0.9;
@@ -27,11 +27,11 @@ export default class SDExplorer {
     this.source = canvas.element;
 
     //draggable area
-    zone = new Zone(ui);
+    region = new Region(ui);
 
     // draw area for inpainting
     drawPad = new DrawingPad(ui.inpainting.drawing);
-    zone.element.appendChild(drawPad.canvas);
+    region.element.appendChild(drawPad.canvas);
 
     // undo (/redo?)
     history = new History(canvas, ui);
@@ -52,7 +52,7 @@ export default class SDExplorer {
       if (data.error == false) {
         const image = new Image();
         image.onload = () => {
-          let rect = zone.rect;
+          let rect = region.rect;
           //draw to canvas
           canvas.drawImageAt(image, rect.x, rect.y);
           //push to history
@@ -63,7 +63,7 @@ export default class SDExplorer {
         // TODO handle errors ( => Console)
       }
 
-      zone.hideThrobber();
+      region.hideThrobber();
       locked = false;
     });
 
@@ -101,7 +101,7 @@ export default class SDExplorer {
     ui.on("inference", (object) => {
       if (!isReady(object)) return;
       socket.emit("inference", ui.getConfig(object));
-      zone.showThrobber();
+      region.showThrobber();
     });
 
     // call an image 2 image
@@ -110,7 +110,7 @@ export default class SDExplorer {
 
       //save the cropped image and call the img2img function:
       // crop and convert to Blob
-      const crop = canvas.crop(this.source, zone.rect);
+      const crop = canvas.crop(this.source, region.rect);
       crop.toBlob(
         (blob) => {
           // tell node to save to disk
@@ -118,7 +118,7 @@ export default class SDExplorer {
           //once it's saved, call the img2img
           socket.once("on_image_saved", () => {
             socket.emit("image_image", ui.getConfig(object));
-            zone.showThrobber();
+            region.showThrobber();
           });
         },
         "image/jpeg",
@@ -132,7 +132,7 @@ export default class SDExplorer {
 
       //save the cropped image and call the img2img function:
       // crop and convert to Blob
-      const crop = canvas.crop(this.source, zone.rect);
+      const crop = canvas.crop(this.source, region.rect);
       crop.toBlob(
         (blob) => {
           // tell node to save to disk
@@ -149,7 +149,7 @@ export default class SDExplorer {
                 socket.once("on_image_saved", () => {
                   // call inpainting
                   socket.emit("inpainting", ui.getConfig(object));
-                  zone.showThrobber();
+                  region.showThrobber();
                   //clear the mask
                   drawPad.clear();
                 });
@@ -164,17 +164,17 @@ export default class SDExplorer {
       );
     });
 
-    //zone settings
+    //region settings
 
     //resize
     const resize_zone = () => {
-      const w = ui.zone.width;
-      const h = ui.zone.height;
-      zone.resize(w, h);
+      const w = ui.region.width;
+      const h = ui.region.height;
+      region.resize(w, h);
       drawPad.resize(w, h);
     };
-    ui.zone.bindings.width.on("change", resize_zone);
-    ui.zone.bindings.height.on("change", resize_zone);
+    ui.region.bindings.width.on("change", resize_zone);
+    ui.region.bindings.height.on("change", resize_zone);
     // clear
     ui.on("clear_drawpad", drawPad.clear.bind(drawPad));
 

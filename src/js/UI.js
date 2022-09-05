@@ -52,6 +52,7 @@ export default class UI extends EventEmitter {
     // params
     this.clipboard = "";
     this.inference = {
+      // init: () => {}, //TODO add init step
       prompt: "",
       prompt_actions: {
         type: "grid",
@@ -161,14 +162,14 @@ export default class UI extends EventEmitter {
     this.addMenu(this.img2img, tab.pages[1]);
     this.addMenu(this.inpainting, tab.pages[2]);
 
-    //zone settings
-    this.zone = {
+    //region settings
+    this.region = {
       width: zone_size,
       height: zone_size,
     };
     pane.addSeparator();
-    const zone = pane.addFolder({ title: "zone", expanded: true });
-    this.addMenu(this.zone, zone);
+    const region = pane.addFolder({ title: "region", expanded: true });
+    this.addMenu(this.region, region);
 
     //canvas settings
     this.canvas = {
@@ -231,7 +232,6 @@ export default class UI extends EventEmitter {
         object.field = field.controller_.valueController.view.inputElement;
         object.field.style.fontSize = 15 + "px";
         object.field.style.lineHeight = 17 + "px";
-
         //
         //
       } else if (typeof object[key] === "function") {
@@ -335,7 +335,7 @@ export default class UI extends EventEmitter {
   // return the config object to be passed to Node
   getConfig(object) {
     let cfg = Object.assign({}, object);
-    cfg = Object.assign(cfg, this.zone);
+    cfg = Object.assign(cfg, this.region);
     cfg.prompt = object.field.value.trim();
     //clean up
     for (let key in cfg) {

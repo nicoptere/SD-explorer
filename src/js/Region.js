@@ -1,6 +1,6 @@
 import Draggable from "draggable";
-let throbber, drag, zone;
-export default class Zone {
+let throbber, drag, region;
+export default class Region {
   constructor(ui) {
     throbber = document.getElementById("throbber");
     drag = document.getElementById("drag");
@@ -14,12 +14,12 @@ export default class Zone {
         return e == drag || ui.tabIndex != 2;
       },
     });
-    zone = document.getElementById("zone");
-    this.element = zone;
+    region = document.getElementById("region");
+    this.element = region;
   }
 
   get rect() {
-    const r = zone.getBoundingClientRect();
+    const r = region.getBoundingClientRect();
     r.x += window.scrollX;
     r.y += window.scrollY;
     return r;
@@ -34,11 +34,11 @@ export default class Zone {
   }
   set width(v) {
     drag.style.width = v + "px";
-    zone.style.width = v + "px";
+    region.style.width = v + "px";
   }
   set height(v) {
     drag.style.height = v + "px";
-    zone.style.height = v + "px";
+    region.style.height = v + "px";
   }
   resize(w, h) {
     this.width = w;
