@@ -135,19 +135,23 @@ export default class UI extends EventEmitter {
           this.emit("undo");
         },
       },
-      brush_size,
-      softness: unit,
-      alpha: unit,
-      clear: () => {
-        this.emit("clear_drawpad");
-      },
-      mode: {
-        type: "radio",
-        draw: () => {
-          this.emit("draw_mode", "draw");
+      //ADD folder + settings (keyboard shortcuts) + source
+      drawing: {
+        type: "folder",
+        brush_size,
+        softness: unit,
+        alpha: unit,
+        clear: () => {
+          this.emit("clear_drawpad");
         },
-        erase: () => {
-          this.emit("draw_mode", "erase");
+        mode: {
+          type: "radio",
+          draw: () => {
+            this.emit("draw_mode", "draw");
+          },
+          erase: () => {
+            this.emit("draw_mode", "erase");
+          },
         },
       },
     };
@@ -202,42 +206,15 @@ export default class UI extends EventEmitter {
     }
 
     // maximize all controls width ( hacky hacky...)
-    const els = document.querySelectorAll(".tp-lblv_v");
+    let els = document.querySelectorAll(".tp-lblv_v");
     for (let i = 0; i < els.length; i++) {
-      els[i].style.flexGrow = 2;
+      els[i].style.flexGrow = 1;
     }
-
     pane.refresh();
     this.addKeyboardShortcuts();
   }
 
-  getConfig(object) {
-    let cfg = Object.assign({}, object);
-    cfg = Object.assign(cfg, this.zone);
-    cfg.prompt = object.field.value.trim();
-    //clean up
-    for (let key in cfg) {
-      if (typeof cfg[key] === "function" || typeof cfg[key] === "object") {
-        delete cfg[key];
-      }
-    }
-    return cfg;
-  }
-
-  getShortcut(folder, key) {
-    let shortcut = "";
-    if (
-      CONFIG.settings.keymap[folder.title] != undefined &&
-      CONFIG.settings.keymap[folder.title][key] != undefined
-    ) {
-      shortcut = " (" + CONFIG.settings.keymap[folder.title][key] + ")";
-    }
-    return shortcut;
-  }
-
   addMenu(object, folder) {
-    // console.log("create menu for ", folder);
-
     // expose the sliders (to the drawingPad for instance)
     const bindings = {};
     for (let key in object) {
@@ -252,6 +229,9 @@ export default class UI extends EventEmitter {
         //
         // store a path to the input textarea !!! ( holy shit )
         object.field = field.controller_.valueController.view.inputElement;
+        object.field.style.fontSize = 15 + "px";
+        object.field.style.lineHeight = 17 + "px";
+
         //
         //
       } else if (typeof object[key] === "function") {
@@ -270,6 +250,12 @@ export default class UI extends EventEmitter {
         bindings[key] = color;
       } else {
         switch (object[key].type) {
+          // a sub folder (ie drawing )
+          case "folder":
+            let sub = folder.addFolder({ title: key, expanded: true });
+            delete object[key].type;
+            this.addMenu(object[key], sub);
+            break;
           case "grid":
             //buttons list
             delete object[key].type;
@@ -344,6 +330,32 @@ export default class UI extends EventEmitter {
       });
     group.value = 0;
     return group;
+  }
+
+  // return the config object to be passed to Node
+  getConfig(object) {
+    let cfg = Object.assign({}, object);
+    cfg = Object.assign(cfg, this.zone);
+    cfg.prompt = object.field.value.trim();
+    //clean up
+    for (let key in cfg) {
+      if (typeof cfg[key] === "function" || typeof cfg[key] === "object") {
+        delete cfg[key];
+      }
+    }
+    return cfg;
+  }
+
+  // add shortcut leeter
+  getShortcut(folder, key) {
+    let shortcut = "";
+    if (
+      CONFIG.settings.keymap[folder.title] != undefined &&
+      CONFIG.settings.keymap[folder.title][key] != undefined
+    ) {
+      shortcut = " (" + CONFIG.settings.keymap[folder.title][key] + ")";
+    }
+    return shortcut;
   }
 
   //keyboard
