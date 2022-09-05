@@ -34,6 +34,7 @@ io.on("connection", function (socket) {
   SOCKET.on("inference", callInference);
   SOCKET.on("image_image", callImage2Image);
   SOCKET.on("inpainting", callInpainting);
+  // SOCKET.on("upscale", callUpscale);//todo
   SOCKET.on("save_image", saveImage);
 });
 
@@ -55,7 +56,7 @@ let BUSY = false;
 
 // infernece
 
-let inference_worker = pytalk.worker("inference_worker.py");
+let inference_worker = pytalk.worker("python/inference_worker.py");
 let inference = inference_worker.method("inference");
 function callInference(data) {
   if (debug) console.log("node: inference data", data);
@@ -90,7 +91,7 @@ function callInference(data) {
 
 // image to image
 
-let img2img_worker = pytalk.worker("image_to_image_worker.py");
+let img2img_worker = pytalk.worker("python/image_to_image_worker.py");
 let img2img = img2img_worker.method("img2img");
 function callImage2Image(data) {
   if (debug) console.log("node: image to image data", data);
@@ -133,7 +134,7 @@ function callImage2Image(data) {
 
 // inpainting
 
-let inpainting_worker = pytalk.worker("inpainting_worker.py");
+let inpainting_worker = pytalk.worker("python/inpainting_worker.py");
 let inpainting = inpainting_worker.method("inpainting");
 function callInpainting(data) {
   if (debug) console.log("node: inpainting data", data);

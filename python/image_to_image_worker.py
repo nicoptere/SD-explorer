@@ -5,7 +5,7 @@ from PIL import Image
 import numpy as np
 
 # image 2 image utils
-from image_to_image import StableDiffusionImg2ImgPipeline, preprocess
+from python.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 
 # creates a folder to store the images
 ROOT_FOLDER = "img2img/"

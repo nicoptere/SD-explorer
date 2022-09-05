@@ -5,7 +5,7 @@ from PIL import Image
 import numpy as np
 
 # inpainting utils
-from inpainting import StableDiffusionInpaintingPipeline
+from python.inpainting import StableDiffusionInpaintingPipeline
 
 # creates a folder to store the images
 ROOT_FOLDER = "inpainting/"
