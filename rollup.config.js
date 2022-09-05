@@ -29,7 +29,7 @@ export default {
       presets: ["@babel/preset-env"],
     }),
 
-    // // minification
-    // terser(),
+    // minification
+    terser(),
   ],
 };
