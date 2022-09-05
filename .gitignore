@@ -2,9 +2,10 @@ node_modules
 inference
 img2img
 inpainting
-trash
+python/__pycache__
 package-lock.json
 
-src/Test.js
+
+trash
 src/js/Drawing.js
 src/three
