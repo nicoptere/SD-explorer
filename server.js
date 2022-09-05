@@ -1,19 +1,28 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-
 const io = require("socket.io")(server);
 const pytalk = require("pytalk-2");
 const fs = require("fs");
 
 let debug = true;
 
+// socket server
+let SOCKET;
+io.on("connection", function (socket) {
+  SOCKET = socket;
+  SOCKET.emit("init", {
+    message: "socket => wohoo! 🐲",
+  });
+  SOCKET.on("inference", callInference);
+  SOCKET.on("image_image", callImage2Image);
+  SOCKET.on("inpainting", callInpainting);
+  SOCKET.on("save_image", saveImage);
+  // SOCKET.on("upscale", callUpscale);//TODO
+});
+
 // server setup
 const PORT = 8080;
-// change for your IP address to use form device
-// (see https://stackoverflow.com/questions/68624631/access-nodejs-express-server-from-android-phone)
-const IP = "192.168.1.22";
-
 server.listen(PORT);
 
 //main route
@@ -25,8 +34,11 @@ app.get("/", function (req, res) {
 app.use("/assets", express.static("dist/assets"));
 
 //expose the serve rover IP
+// change for your IP address to use form device
+// (see https://stackoverflow.com/questions/68624631/access-nodejs-express-server-from-android-phone)
+const IP = "192.168.1.22";
 app.listen(PORT, IP || "localhost", () => {
-  console.log(`Listening to requests on http://localhost:${PORT}`);
+  console.log(`Listening to requests on http://localhost:${PORT}`); //TODO: allow connection from device
 });
 
 // app.use(express.static("public"));
@@ -38,20 +50,6 @@ app.use("/img2img", express.static("img2img"));
 
 //this is where the inpainting will be generated ( set in "inpainting.py" )
 app.use("/inpainting", express.static("inpainting"));
-
-// socket server
-let SOCKET;
-io.on("connection", function (socket) {
-  SOCKET = socket;
-  SOCKET.emit("init", {
-    message: "socket:\n wohoo! 🐲",
-  });
-  SOCKET.on("inference", callInference);
-  SOCKET.on("image_image", callImage2Image);
-  SOCKET.on("inpainting", callInpainting);
-  // SOCKET.on("upscale", callUpscale);//todo
-  SOCKET.on("save_image", saveImage);
-});
 
 // this saves the image region sent from the client to disk (used by img2img and inpainting )
 function saveImage(name, blob) {
@@ -68,6 +66,18 @@ let callBackCount = 0;
 let BUSY = false;
 
 // hook the PYTHON methods:
+
+function onComplete(error, value) {
+  if (callBackCount++ == 0) {
+    // TODO improve error handling + unify callback
+    if (debug) {
+      console.log("node: inference error?", error);
+    }
+    SOCKET.emit("image_ready", { error, value });
+    // unlock
+    BUSY = false;
+  }
+}
 
 // infernece
 
@@ -90,18 +100,7 @@ function callInference(data) {
   const height = data.height;
 
   // call the python method
-  inference(prompt, steps, guidance, seed, width, height, (error, res) => {
-    if (callBackCount++ == 0) {
-      // TODO improve error handling + unify callback
-      if (debug) {
-        console.log("node: inference error", error);
-        console.log("node: inference callback");
-      }
-      SOCKET.emit("image_ready", { value: res });
-      // unlock
-      BUSY = false;
-    }
-  });
+  inference(prompt, steps, guidance, seed, width, height, onComplete);
 }
 
 // image to image
@@ -125,26 +124,7 @@ function callImage2Image(data) {
   const height = data.height;
 
   // call image ot image
-  img2img(
-    // imageData,
-    prompt,
-    strength,
-    guidance,
-    seed,
-    width,
-    height,
-    (err, res) => {
-      if (callBackCount++ == 0) {
-        if (debug) {
-          console.log("node: image to image error", err);
-          console.log("node: image to image callback", res);
-        }
-        SOCKET.emit("image_ready", { value: res });
-        // unlock
-        BUSY = false;
-      }
-    }
-  );
+  img2img(prompt, strength, guidance, seed, width, height, onComplete);
 }
 
 // inpainting
@@ -168,26 +148,7 @@ function callInpainting(data) {
   const height = data.height;
 
   // call image ot image
-  inpainting(
-    // imageData,
-    prompt,
-    strength,
-    guidance,
-    seed,
-    width,
-    height,
-    (err, res) => {
-      if (callBackCount++ == 0) {
-        if (debug) {
-          console.log("node: image to image error", err);
-          console.log("node: image to image callback", res);
-        }
-        SOCKET.emit("image_ready", { value: res });
-        // unlock
-        BUSY = false;
-      }
-    }
-  );
+  inpainting(prompt, strength, guidance, seed, width, height, onComplete);
 }
 
 // forces the process to quit (on Windows, it sometimes refuses to DIE!! )

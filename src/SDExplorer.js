@@ -49,15 +49,20 @@ export default class SDExplorer {
 
     // draws the image to canvas whenever a function is finished
     socket.on("image_ready", (data) => {
-      const image = new Image();
-      image.onload = () => {
-        let rect = zone.rect;
-        //draw to canvas
-        canvas.drawImageAt(image, rect.x, rect.y);
-        //push to history
-        history.pushState(image, rect);
-      };
-      image.setAttribute("src", data.value);
+      if (data.error == false) {
+        const image = new Image();
+        image.onload = () => {
+          let rect = zone.rect;
+          //draw to canvas
+          canvas.drawImageAt(image, rect.x, rect.y);
+          //push to history
+          history.pushState(image, rect);
+        };
+        image.setAttribute("src", data.value);
+      } else {
+        // TODO handle errors ( => Console)
+      }
+
       zone.hideThrobber();
       locked = false;
     });
@@ -179,14 +184,12 @@ export default class SDExplorer {
     ui.canvas.width = canvas.width;
     ui.canvas.height = canvas.height;
     ui.canvas.bindings.width.on("change", (e) => {
-      if (e.last) {
-        canvas.setSize(e.value, canvas.height);
-      }
+      if (e.last == false) return;
+      canvas.setSize(e.value, canvas.height);
     });
     ui.canvas.bindings.height.on("change", (e) => {
-      if (e.last) {
-        canvas.setSize(canvas.width, e.value);
-      }
+      if (e.last == false) return;
+      canvas.setSize(canvas.width, e.value);
     });
     ui.canvas.bindings.color.on("change", (e) => {
       canvas.setClearColor(e.value);
