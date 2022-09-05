@@ -5,6 +5,11 @@ import { EventEmitter } from "eventemitter3";
 import { Prompter } from "./Prompter";
 import Draggable from "draggable";
 import { CONFIG } from "./Config";
+import InferenceTab from "./ui/InferenceTab";
+import ImageToImageTab from "./ui/ImageToImageTab";
+import InpaintingTab from "./ui/InpaintingTab";
+import UpscaleTab from "./ui/UpscaleTab";
+import ImageAndRegionPanel from "./ui/ImageAndRegionPanel";
 let pane;
 export default class UI extends EventEmitter {
   constructor(panelId = "#SDExplorer") {
@@ -23,17 +28,6 @@ export default class UI extends EventEmitter {
     pane.registerPlugin(TextareaPlugin);
     pane.registerPlugin(EssentialsPlugin);
 
-    // tabs default options
-
-    const seed = CONFIG.settings.options.seed;
-    const steps = CONFIG.settings.options.steps;
-    const strength = CONFIG.settings.options.strength;
-    const guidance = CONFIG.settings.options.guidance;
-    const brush_size = CONFIG.settings.options.brush_size;
-    const zone_size = CONFIG.settings.options.zone_size;
-    const canvas_size = CONFIG.settings.options.canvas_size;
-    const unit = CONFIG.settings.options.unit;
-
     // tabs
     this.tabIndex = 0;
     const tab = pane
@@ -42,6 +36,7 @@ export default class UI extends EventEmitter {
           { title: "inference" },
           { title: "img2img" },
           { title: "inpainting" },
+          { title: "upscale" },
         ],
       })
       .on("select", (e) => {
@@ -49,148 +44,22 @@ export default class UI extends EventEmitter {
         this.emit("tab_change", e.index);
       });
 
-    // params
+    //to copy /paste prompts
     this.clipboard = "";
-    this.inference = {
-      // init: () => {}, //TODO add init step
-      prompt: "",
-      prompt_actions: {
-        type: "grid",
-        randomize: () => {
-          this.emit("randomize", this.inference);
-        },
-        copy: () => {
-          this.clipboard = this.inference.field.value;
-        },
-        paste: () => {
-          this.inference.field.value = this.clipboard;
-        },
-      },
-      seed,
-      steps,
-      guidance,
-      actions: {
-        type: "grid",
-        compute: () => {
-          this.emit("inference", this.inference);
-        },
-        undo: () => {
-          this.emit("undo");
-        },
-      },
-    };
-
-    this.img2img = {
-      prompt: "",
-      prompt_actions: {
-        type: "grid",
-        randomize: () => {
-          this.emit("randomize", this.img2img);
-        },
-        copy: () => {
-          this.clipboard = this.img2img.field.value;
-        },
-        paste: () => {
-          this.img2img.field.value = this.clipboard;
-        },
-      },
-      seed,
-      strength,
-      guidance,
-      // brush_size,
-      // color: "#ff0055ff",
-      actions: {
-        type: "grid",
-        compute: () => {
-          this.emit("img2img", this.img2img);
-        },
-        undo: () => {
-          this.emit("undo");
-        },
-      },
-    };
-
-    this.inpainting = {
-      prompt: "",
-      prompt_actions: {
-        type: "grid",
-        randomize: () => {
-          this.emit("randomize", this.inpainting);
-        },
-        copy: () => {
-          this.clipboard = this.inpainting.field.value;
-        },
-        paste: () => {
-          this.inpainting.field.value = this.clipboard;
-        },
-      },
-      seed,
-      strength,
-      guidance,
-      actions: {
-        type: "grid",
-        compute: () => {
-          this.emit("inpainting", this.inpainting);
-        },
-        undo: () => {
-          this.emit("undo");
-        },
-      },
-      //ADD folder + settings (keyboard shortcuts) + source
-      drawing: {
-        type: "folder",
-        brush_size,
-        softness: unit,
-        alpha: unit,
-        clear: () => {
-          this.emit("clear_drawpad");
-        },
-        mode: {
-          type: "radio",
-          draw: () => {
-            this.emit("draw_mode", "draw");
-          },
-          erase: () => {
-            this.emit("draw_mode", "erase");
-          },
-        },
-      },
-    };
+    // params
+    this.inference = new InferenceTab(this);
+    this.img2img = new ImageToImageTab(this);
+    this.inpainting = new InpaintingTab(this);
+    this.upscale = new UpscaleTab(this);
 
     //   populate panel
     this.addMenu(this.inference, tab.pages[0]);
     this.addMenu(this.img2img, tab.pages[1]);
     this.addMenu(this.inpainting, tab.pages[2]);
+    this.addMenu(this.upscale, tab.pages[3]);
 
-    //region settings
-    this.region = {
-      width: zone_size,
-      height: zone_size,
-    };
-    pane.addSeparator();
-    const region = pane.addFolder({ title: "region", expanded: true });
-    this.addMenu(this.region, region);
-
-    //canvas settings
-    this.canvas = {
-      width: canvas_size,
-      height: canvas_size,
-      color: "rgba(214,214,214,1)",
-      grain: unit,
-      actions: {
-        type: "grid",
-        clear: () => {
-          this.emit("clear");
-        },
-        save: () => {
-          this.emit("save");
-        },
-      },
-    };
-    this.canvas.grain.value = 0.0;
-    pane.addSeparator();
-    const canvas = pane.addFolder({ title: "canvas" });
-    this.addMenu(this.canvas, canvas);
+    //region and canvas settings
+    new ImageAndRegionPanel(this, pane);
 
     //filter & randomizes the prompts
     if (CONFIG.settings.promptKeyword != null) {
@@ -228,12 +97,17 @@ export default class UI extends EventEmitter {
         let field = folder.addInput(object, key, cfg);
 
         //
-        // store a path to the input textarea !!! ( holy shit )
+        // store a path to the input textarea Element ( holy shit!!! )
         object.field = field.controller_.valueController.view.inputElement;
         object.field.style.fontSize = 15 + "px";
         object.field.style.lineHeight = 17 + "px";
         //
         //
+      } else if (
+        typeof object[key] === "string" ||
+        typeof object[key] === "boolean"
+      ) {
+        bindings[key] = folder.addInput(object, key);
       } else if (typeof object[key] === "function") {
         const btn = folder.addButton({
           title: key + this.getShortcut(folder, key),
@@ -250,7 +124,13 @@ export default class UI extends EventEmitter {
         bindings[key] = color;
       } else {
         switch (object[key].type) {
-          // a sub folder (ie drawing )
+          case "list":
+            delete object[key].type;
+            const options = object[key].options;
+            object[key] = "123";
+            folder.addInput(object, key, options); //TODO list
+            break;
+          // a sub folder (ie drawing ) // TODO move to another panel
           case "folder":
             let sub = folder.addFolder({ title: key, expanded: true });
             delete object[key].type;
@@ -336,7 +216,9 @@ export default class UI extends EventEmitter {
   getConfig(object) {
     let cfg = Object.assign({}, object);
     cfg = Object.assign(cfg, this.region);
-    cfg.prompt = object.field.value.trim();
+    if (object.field != undefined) {
+      cfg.prompt = object.field.value.trim();
+    }
     //clean up
     for (let key in cfg) {
       if (typeof cfg[key] === "function" || typeof cfg[key] === "object") {
