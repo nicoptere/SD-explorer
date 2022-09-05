@@ -5,7 +5,9 @@ inpainting
 python/__pycache__
 package-lock.json
 
+dist/assets/index.js
 
 trash
 src/js/Drawing.js
+src/Test.js
 src/three

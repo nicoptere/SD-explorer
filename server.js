@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
+
 const io = require("socket.io")(server);
 const pytalk = require("pytalk-2");
 const fs = require("fs");
@@ -8,19 +9,33 @@ const fs = require("fs");
 let debug = true;
 
 // server setup
-server.listen(8080);
+const PORT = 8080;
+// change for your IP address to use form device
+// (see https://stackoverflow.com/questions/68624631/access-nodejs-express-server-from-android-phone)
+const IP = "192.168.1.22";
+
+server.listen(PORT);
 
 //main route
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(__dirname + "/dist/index.html");
 });
-//exposes the resource folders
-app.use("/assets", express.static("assets"));
 
+//exposes the resource folders
+app.use("/assets", express.static("dist/assets"));
+
+//expose the serve rover IP
+app.listen(PORT, IP || "localhost", () => {
+  console.log(`Listening to requests on http://localhost:${PORT}`);
+});
+
+// app.use(express.static("public"));
 //this is where the images will be generated ( set in "inference.py" )
 app.use("/inference", express.static("inference"));
+
 //this is where the image2image will be generated ( set in "img2img.py" )
 app.use("/img2img", express.static("img2img"));
+
 //this is where the inpainting will be generated ( set in "inpainting.py" )
 app.use("/inpainting", express.static("inpainting"));
 
@@ -29,7 +44,7 @@ let SOCKET;
 io.on("connection", function (socket) {
   SOCKET = socket;
   SOCKET.emit("init", {
-    message: "socket:\nconnection established! wohoo! 🐲",
+    message: "socket:\n wohoo! 🐲",
   });
   SOCKET.on("inference", callInference);
   SOCKET.on("image_image", callImage2Image);
