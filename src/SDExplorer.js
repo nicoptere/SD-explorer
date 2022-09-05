@@ -30,7 +30,7 @@ export default class SDExplorer {
     zone = new Zone(ui);
 
     // draw area for inpainting
-    drawPad = new DrawingPad(ui.inpainting);
+    drawPad = new DrawingPad(ui.inpainting.drawing);
     zone.element.appendChild(drawPad.canvas);
 
     // undo (/redo?)
