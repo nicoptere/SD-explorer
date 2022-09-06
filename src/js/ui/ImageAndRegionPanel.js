@@ -11,7 +11,7 @@ export default class ImageAndRegionPanel {
     };
     pane.addSeparator();
     const region = pane.addFolder({ title: "region", expanded: true });
-    scope.addMenu(scope.region, region);
+    scope.addTab(region, scope.region);
 
     //canvas settings
     scope.canvas = {
@@ -32,6 +32,6 @@ export default class ImageAndRegionPanel {
     scope.canvas.grain.value = 0.1;
     pane.addSeparator();
     const canvas = pane.addFolder({ title: "canvas" });
-    scope.addMenu(scope.canvas, canvas);
+    scope.addTab(canvas, scope.canvas);
   }
 }

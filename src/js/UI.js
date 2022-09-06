@@ -12,7 +12,7 @@ import UpscaleTab from "./ui/UpscaleTab";
 import ImageAndRegionPanel from "./ui/ImageAndRegionPanel";
 let pane;
 export default class UI extends EventEmitter {
-  constructor(panelId = "#SDExplorer") {
+  constructor(panelId = "#App") {
     super();
 
     const panel = document.querySelector(panelId);
@@ -53,10 +53,10 @@ export default class UI extends EventEmitter {
     this.upscale = new UpscaleTab(this);
 
     //   populate panel
-    this.addMenu(this.inference, tab.pages[0]);
-    this.addMenu(this.img2img, tab.pages[1]);
-    this.addMenu(this.inpainting, tab.pages[2]);
-    this.addMenu(this.upscale, tab.pages[3]);
+    this.addTab(tab.pages[0], this.inference);
+    this.addTab(tab.pages[1], this.img2img);
+    this.addTab(tab.pages[2], this.inpainting);
+    this.addTab(tab.pages[3], this.upscale);
 
     //region and canvas settings
     new ImageAndRegionPanel(this, pane);
@@ -84,7 +84,7 @@ export default class UI extends EventEmitter {
     this.addKeyboardShortcuts();
   }
 
-  addMenu(object, folder) {
+  addTab(folder, object) {
     // expose the sliders (to the drawingPad for instance)
     const bindings = {};
     for (let key in object) {
@@ -118,7 +118,7 @@ export default class UI extends EventEmitter {
         });
       } else if (key === "color") {
         const color = folder.addInput(object, "color", {
-          // picker: "inline",
+          picker: "inline",
           // expanded: true,
         });
         bindings[key] = color;
@@ -130,23 +130,27 @@ export default class UI extends EventEmitter {
             object[key] = "123";
             folder.addInput(object, key, options); //TODO list
             break;
+
           // a sub folder (ie drawing ) // TODO move to another panel
           case "folder":
             let sub = folder.addFolder({ title: key, expanded: true });
             delete object[key].type;
-            this.addMenu(object[key], sub);
+            this.addTab(sub, object[key]);
             break;
+
           case "grid":
             //buttons list
             delete object[key].type;
             this.buttonGrid(folder, object[key]);
             break;
+
           case "radio":
             //radio nbuttons
             delete object[key].type;
             this.buttonGrid(folder, object[key]);
             // this.radioButtons(object, key, folder, object[key]);
             break;
+
           default:
             let props = object[key];
             object[key] = object[key].value;

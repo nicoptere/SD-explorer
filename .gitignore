@@ -1,8 +1,5 @@
 node_modules
-inference
-img2img
-inpainting
-upscale
+results
 python/__pycache__
 python/models
 package-lock.json

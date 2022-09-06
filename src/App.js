@@ -1,18 +1,20 @@
 import { io } from "socket.io-client";
 import Canvas from "./js/Canvas";
+import Draggable from "draggable";
 import DrawingPad from "./js/DrawingPad";
 import History from "./js/History";
 import { Prompter } from "./js/Prompter";
 import UI from "./js/UI";
 import Region from "./js/Region";
-import saveAs from "file-saver";
+import { saveCanvas } from "./js/ImageUtils";
+import UpscalePreview from "./js/UpscalePreview";
 
-let canvas, socket, region, ui, history, drawPad;
+let canvas, socket, region, ui, history, drawPad, upscale;
 
 let locked = false;
 const JPG_QUALITY = 0.9;
 
-export default class SDExplorer {
+export default class App {
   constructor(width, height) {
     // socket
     socket = io();
@@ -35,6 +37,9 @@ export default class SDExplorer {
 
     // undo (/redo?)
     history = new History(canvas, ui);
+
+    //upscale preview
+    upscale = new UpscalePreview();
 
     // logic
 
@@ -59,20 +64,18 @@ export default class SDExplorer {
           history.pushState(image, rect);
         };
         console.log(data.value);
-        image.setAttribute("src", data.value.replace("results", "")); //TODO fix
+        image.setAttribute("src", data.value);
       } else {
-        // TODO handle errors ( => Console)
+        // TODO handle errors ( => Console?)
       }
-
       region.hideThrobber();
       locked = false;
     });
 
+    // upscale
     socket.on("upscale_ready", (data) => {
       if (data.error == false) {
-        const upscale = document.getElementById("upscale");
-        upscale.setAttribute("src", null); //TODO fix
-        upscale.setAttribute("src", data.value.replace("results", "")); //TODO fix
+        upscale.setSource(data.value);
       } else {
         // TODO handle errors ( => Console)
       }
@@ -82,13 +85,17 @@ export default class SDExplorer {
 
     // manage tab change
     ui.on("tab_change", (index) => {
+      drawPad.hide();
+      upscale.hide();
       switch (index) {
         case 0:
         case 1:
-          drawPad.hide();
           break;
         case 2:
           drawPad.show();
+          break;
+        case 3:
+          upscale.show();
           break;
         default:
           return;
@@ -243,9 +250,7 @@ export default class SDExplorer {
 
     // save canvas
     ui.on("save", () => {
-      canvas.element.toBlob(function (blob) {
-        saveAs(blob, "composition-" + Date.now() + ".png");
-      });
+      saveCanvas(canvas.element);
     });
   }
 

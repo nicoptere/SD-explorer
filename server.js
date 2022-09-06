@@ -41,18 +41,9 @@ app.listen(PORT, IP || "localhost", () => {
   console.log(`Listening to requests on http://localhost:${PORT}`); //TODO: allow connection from device
 });
 
-// app.use(express.static("public"));
-//this is where the images will be generated ( set in "inference.py" )
-app.use("/inference", express.static("results/inference"));
-
-//this is where the image2image will be generated ( set in "img2img.py" )
-app.use("/img2img", express.static("results/img2img"));
-
-//this is where the inpainting will be generated ( set in "inpainting.py" )
-app.use("/inpainting", express.static("results/inpainting"));
-
-//this is where the inpainting will be generated ( set in "inpainting.py" )
-app.use("/upscale", express.static("results/upscale"));
+//this is where the images will be generated ( see ROOT_FOLDER in python files )
+const ROOT_FOLDER = "results";
+app.use(express.static("results"));
 
 // this saves the image region sent from the client to disk (used by img2img and inpainting )
 function saveImage(name, blob) {
@@ -76,7 +67,10 @@ function onComplete(error, value) {
     if (debug) {
       console.log("node: inference error?", error);
     }
-    SOCKET.emit("image_ready", { error, value });
+    SOCKET.emit("image_ready", {
+      error,
+      value: value.replace(ROOT_FOLDER, ""),
+    });
     // unlock
     BUSY = false;
   }
@@ -181,7 +175,10 @@ function onUpscaleComplete(error, value) {
     if (debug) {
       console.log("node: inference error?", error);
     }
-    SOCKET.emit("upscale_ready", { error, value });
+    SOCKET.emit("upscale_ready", {
+      error,
+      value: value.replace(ROOT_FOLDER, ""),
+    });
     // unlock
     BUSY = false;
   }

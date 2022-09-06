@@ -8,6 +8,7 @@ import numpy as np
 from python.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 
 # creates a folder to store the images
+TMP_FOLDER = "results/tmp/"
 ROOT_FOLDER = "results/img2img/"
 os.makedirs(ROOT_FOLDER, exist_ok=True)
 
@@ -47,7 +48,7 @@ def img2img(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
 
     global pipe, generator, SEED, DEBUG
 
-    image = Image.open(ROOT_FOLDER + 'i2i-tmp.jpg').convert("RGB")
+    image = Image.open(TMP_FOLDER + 'i2i-tmp.jpg').convert("RGB")
     image = preprocess(image)
 
     # cast variables to the proper type (they're sent as strings)

@@ -8,6 +8,7 @@ import numpy as np
 from python.inpainting import StableDiffusionInpaintingPipeline
 
 # creates a folder to store the images
+TMP_FOLDER = "results/tmp/"
 ROOT_FOLDER = "results/inpainting/"
 os.makedirs(ROOT_FOLDER, exist_ok=True)
 
@@ -48,8 +49,8 @@ def inpainting(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
 
     global pipe, generator, SEED, DEBUG
 
-    image = Image.open(ROOT_FOLDER + 'inp-tmp.jpg')
-    mask = Image.open(ROOT_FOLDER + 'inp-msk.jpg')
+    image = Image.open(TMP_FOLDER + 'inp-tmp.jpg')
+    mask = Image.open(TMP_FOLDER + 'inp-msk.jpg')
 
     # cast variables to the proper type (they're sent as strings)
     strength = float(strength)
