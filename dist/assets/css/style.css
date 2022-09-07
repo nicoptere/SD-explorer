@@ -74,8 +74,8 @@ body {
 }
 #drag {
   z-index: 10000;
-  /* position: absolute; */
-  position: fixed;
+  position: absolute;
+  /* position: fixed; */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -171,10 +171,10 @@ body {
   height: 36px;
 }
 .tp-btnv_t {
-  color: red;
-  font-size: 20px;
-  line-height: 36px;
-  height: 36px;
+  color: rgb(77, 77, 77);
+  font-size: 18px;
+  height: 32px;
+  line-height: 32px;
   font-family: Material Symbols Outlined;
 }
 
