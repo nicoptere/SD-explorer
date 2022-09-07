@@ -10,19 +10,19 @@ export default class ImageToImageTab extends Tab {
     super(scope);
 
     Object.assign(this, {
-      prompt: "",
       prompt_actions: {
         type: "grid",
-        randomize: () => {
+        replay: () => {
           scope.emit("randomize", scope.img2img);
         },
-        copy: () => {
+        content_copy: () => {
           scope.clipboard = scope.img2img.field.value;
         },
-        paste: () => {
+        content_paste: () => {
           scope.img2img.field.value = scope.clipboard;
         },
       },
+      prompt: "",
       seed,
       strength,
       guidance,
@@ -30,7 +30,7 @@ export default class ImageToImageTab extends Tab {
       // color: "#ff0055ff",
       actions: {
         type: "grid",
-        compute: () => {
+        play_arrow: () => {
           scope.emit("img2img", scope.img2img);
         },
         undo: () => {

@@ -10,25 +10,25 @@ export default class InferenceTab extends Tab {
     super(scope);
 
     Object.assign(this, {
-      prompt: "",
       prompt_actions: {
         type: "grid",
-        randomize: () => {
+        replay: () => {
           scope.emit("randomize", scope.inference);
         },
-        copy: () => {
+        content_copy: () => {
           scope.clipboard = scope.inference.field.value;
         },
-        paste: () => {
+        content_paste: () => {
           scope.inference.field.value = scope.clipboard;
         },
       },
+      prompt: "",
       seed,
       steps,
       guidance,
       actions: {
         type: "grid",
-        compute: () => {
+        play_arrow: () => {
           scope.emit("inference", scope.inference);
         },
         undo: () => {

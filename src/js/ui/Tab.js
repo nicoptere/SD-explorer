@@ -13,7 +13,7 @@ const unit = CONFIG.settings.options.unit;
 export default class Tab {
   constructor(scope) {
     Object.assign(this, {
-      init: () => {},
+      // not_started: () => {},
     });
   }
 }

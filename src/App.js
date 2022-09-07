@@ -32,7 +32,7 @@ export default class App {
     region = new Region(ui);
 
     // draw area for inpainting
-    drawPad = new DrawingPad(ui.inpainting.drawing);
+    drawPad = new DrawingPad(ui.inpainting.draw);
     region.element.appendChild(drawPad.canvas);
 
     // undo (/redo?)
@@ -82,6 +82,10 @@ export default class App {
       region.hideThrobber();
       locked = false;
     });
+
+    // TODO hit space to compute the current tab
+    // CTRL click to drag region on inpainting
+    //auto detect  inpainting regions + queue
 
     // manage tab change
     ui.on("tab_change", (index) => {
@@ -205,6 +209,10 @@ export default class App {
         "image/jpeg",
         JPG_QUALITY
       );
+    });
+    //save the upscaled image
+    ui.on("save_upscale", () => {
+      upscale.save();
     });
 
     //region settings

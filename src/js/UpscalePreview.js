@@ -24,7 +24,7 @@ export default class UpscalePreview {
     const copy = men.querySelector(".copy");
     const zoomin = men.querySelector(".zoom-in");
     const zoomout = men.querySelector(".zoom-out");
-    const save = men.querySelector(".save");
+    const saveBtn = men.querySelector(".save");
     copy.addEventListener("pointerdown", (e) => {
       copyImage(preview);
     });
@@ -36,9 +36,7 @@ export default class UpscalePreview {
       preview.scale /= 1.5;
       this.applyScale();
     });
-    save.addEventListener("pointerdown", (e) => {
-      saveImage(preview, "upscale");
-    });
+    saveBtn.addEventListener("pointerdown", this.save.bind(this));
 
     // const paste = men.querySelector(".paste");
     // paste.addEventListener("pointerdown", (e) => {
@@ -47,11 +45,15 @@ export default class UpscalePreview {
     this.hide();
   }
 
+  save() {
+    saveImage(preview, "upscale");
+  }
+
   applyScale = () => {
     const w = Math.max(preview.naturalWidth, 512);
     const h = Math.max(preview.naturalHeight, 512);
     console.log(w, h);
-    preview.scale = Math.min(Math.max(0.25, preview.scale), 2);
+    preview.scale = Math.min(Math.max(0.25, preview.scale), 1);
     const s = preview.scale;
     preview.style.width = `${s * w}`;
     preview.style.height = `${s * h}`;

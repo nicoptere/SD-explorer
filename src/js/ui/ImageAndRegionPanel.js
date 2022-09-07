@@ -21,7 +21,7 @@ export default class ImageAndRegionPanel {
       grain: unit,
       actions: {
         type: "grid",
-        clear: () => {
+        delete: () => {
           scope.emit("clear");
         },
         save: () => {

@@ -12,25 +12,25 @@ export default class InpaintingTab extends Tab {
     super(scope);
 
     Object.assign(this, {
-      prompt: "",
       prompt_actions: {
         type: "grid",
-        randomize: () => {
+        replay: () => {
           scope.emit("randomize", scope.inpainting);
         },
-        copy: () => {
+        content_copy: () => {
           scope.clipboard = scope.inpainting.field.value;
         },
-        paste: () => {
+        content_paste: () => {
           scope.inpainting.field.value = scope.clipboard;
         },
       },
+      prompt: "",
       seed,
       strength,
       guidance,
       actions: {
         type: "grid",
-        compute: () => {
+        play_arrow: () => {
           scope.emit("inpainting", scope.inpainting);
         },
         undo: () => {
@@ -38,23 +38,23 @@ export default class InpaintingTab extends Tab {
         },
       },
       //ADD folder + settings (keyboard shortcuts) + source
-      drawing: {
+      draw: {
         type: "folder",
         brush_size,
         softness: unit,
         alpha: unit,
-        clear: () => {
+        delete: () => {
           scope.emit("clear_drawpad");
         },
-        mode: {
-          type: "radio",
-          draw: () => {
-            scope.emit("draw_mode", "draw");
-          },
-          erase: () => {
-            scope.emit("draw_mode", "erase");
-          },
-        },
+        // mode: {
+        //   type: "radio",
+        //   draw: () => {
+        //     scope.emit("draw_mode", "draw");
+        //   },
+        //   erase: () => {
+        //     scope.emit("draw_mode", "erase");
+        //   },
+        // },
       },
     });
   }
