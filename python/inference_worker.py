@@ -3,47 +3,45 @@ import torch
 from torch import autocast
 import os
 
+# import shared settings
+from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize
+
 # inference
-# from diffusers import StableDiffusionPipeline
 from python.inference import StableDiffusionPipeline
 
-# creates a folder to store the images
-ROOT_FOLDER = "results/inference/"
-os.makedirs(ROOT_FOLDER, exist_ok=True)
 
-os.makedirs('results/tmp', exist_ok=True)
-
-pipe = None
 SEED = -1
+pipe = None
 generator = None
 
-DEBUG = True
 
+# TODO choose GPU
+# TODO merge sanitize method
+# TODO separate method call to initializes
+# TODO error messages
+# TODO add Dalle mini
+# TODO add img2 prompt
 
-def sanitize(text):
-    # removes invalid characters from the prompt
-    stripped_text = ''
-    for c in text:
-        stripped_text += c if len(c.encode(encoding='utf_8')) == 1 else ''
-    return stripped_text
-
-
+# @pytalk_method('initialize')
 def init():
-    # TODO separate method call to initializes
-
     print('initialize INFERENCE')
     global pipe, generator, SEED
     pipe = StableDiffusionPipeline.from_pretrained(
-        "CompVis/stable-diffusion-v1-4", revision="fp16", torch_dtype=torch.float16, use_auth_token=True)
-    pipe = pipe.to("cuda")
-    generator = torch.Generator("cuda").manual_seed(SEED)
+        "CompVis/stable-diffusion-v1-4",
+        revision="fp16",
+        torch_dtype=torch.float16,
+        use_auth_token=True
+    )
+    pipe = pipe.to(DEVICE.getDevice())
+    generator = torch.Generator('cuda').manual_seed(SEED)
     print('INFERENCE initialized')
+    return True
 
 
 @pytalk_method('inference')
 def inference(prompt, steps=50, guidance=7.5, seed=-1, w=512, h=512):
 
-    global pipe, generator, SEED, DEBUG
+    global pipe, generator, SEED
     # cast variables to the proper type (they're sent as strings)
     steps = int(steps)
     guidance = float(guidance)
@@ -58,16 +56,15 @@ def inference(prompt, steps=50, guidance=7.5, seed=-1, w=512, h=512):
     # ressed the generator if need be
     if seed != -1 or seed != SEED:
         SEED = seed
-        generator = torch.Generator("cuda").manual_seed(SEED)
+        generator = torch.Generator('cuda').manual_seed(SEED)
         if DEBUG == True:
             print("\t set seed: ", SEED)
     else:
         seed = generator.seed()
 
     # create the output file name
-    img_name = ROOT_FOLDER + \
-        "inf-%s_%s_%s_%s_%s_%s.png" % (sanitize(prompt),
-                                       steps, guidance, seed, w, h)
+    img_name = ROOT_FOLDER + "inf-%s_%s_%s_%s_%s_%s.png" % (sanitize(prompt),
+                                                            steps, guidance, seed, w, h)
     img_name = img_name.replace(' ', '-')
 
     # no need to compute, return image path
@@ -82,7 +79,6 @@ def inference(prompt, steps=50, guidance=7.5, seed=-1, w=512, h=512):
             print("\t steps: ", steps)
             print("\t guidance: ", guidance)
             print("\t seed: ", seed)
-            # print("\t img_name: ", img_name)
 
     # perform inference
     with autocast("cuda"):

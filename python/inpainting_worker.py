@@ -7,26 +7,15 @@ import numpy as np
 # inpainting utils
 from python.inpainting import StableDiffusionInpaintingPipeline
 
-# creates a folder to store the images
-TMP_FOLDER = "results/tmp/"
-ROOT_FOLDER = "results/inpainting/"
-os.makedirs(ROOT_FOLDER, exist_ok=True)
+# import shared settings
+from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize
 
 pipe = None
-SEED = -1
 generator = None
-
-DEBUG = True
-
-
-def sanitize(text):
-    # removes invalid characters from the prompt
-    stripped_text = ''
-    for c in text:
-        stripped_text += c if len(c.encode(encoding='utf_8')) == 1 else ''
-    return stripped_text
+SEED = -1
 
 
+# @pytalk_method('initialize')
 def init():
     # TODO separate method call to initializes
 
@@ -39,7 +28,7 @@ def init():
         torch_dtype=torch.float16,
         use_auth_token=True
     )
-    pipe = pipe.to("cuda")
+    pipe = pipe.to(DEVICE.getDevice())
     generator = torch.Generator("cuda").manual_seed(SEED)
     print('INPAINTING initialized')
 
@@ -78,12 +67,6 @@ def inpainting(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
                                        strength, guidance, seed, w, h)
     img_name = img_name.replace(' ', '-')
 
-    # no need to compute, return image path
-    # if os.path.exists(img_name) and seed != -1:
-    #     if DEBUG == True:
-    #         print("image already exists")
-    #     return img_name
-    # else:
     if DEBUG == True:
         print("compute new image: ")
         print("\t prompt: ", prompt)

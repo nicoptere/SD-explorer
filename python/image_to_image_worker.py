@@ -1,32 +1,19 @@
 import torch
 from torch import autocast
-import os
 from PIL import Image
-import numpy as np
 
 # image 2 image utils
 from python.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 
-# creates a folder to store the images
-TMP_FOLDER = "results/tmp/"
-ROOT_FOLDER = "results/img2img/"
-os.makedirs(ROOT_FOLDER, exist_ok=True)
+# import shared settings
+from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize
 
 pipe = None
-SEED = -1
 generator = None
-
-DEBUG = True
-
-
-def sanitize(text):
-    # removes invalid characters from the prompt
-    stripped_text = ''
-    for c in text:
-        stripped_text += c if len(c.encode(encoding='utf_8')) == 1 else ''
-    return stripped_text
+SEED = -1
 
 
+# @pytalk_method('initialize')
 def init():
     # TODO separate method call to initializes
 
@@ -38,7 +25,7 @@ def init():
         torch_dtype=torch.float16,
         use_auth_token=True
     )
-    pipe = pipe.to("cuda")
+    pipe = pipe.to(DEVICE.getDevice())
     generator = torch.Generator("cuda").manual_seed(SEED)
     print('IMAGE TO IMAGE initialized')
 
@@ -46,8 +33,7 @@ def init():
 @pytalk_method('img2img')
 def img2img(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
 
-    global pipe, generator, SEED, DEBUG
-
+    global pipe, generator, SEED
     image = Image.open(TMP_FOLDER + 'i2i-tmp.jpg').convert("RGB")
     image = preprocess(image)
 
@@ -72,23 +58,16 @@ def img2img(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
         seed = generator.seed()
 
     # create the output file name
-    img_name = ROOT_FOLDER + \
-        "i2i-%s_%s_%s_%s_%s_%s.png" % (sanitize(prompt),
-                                       strength, guidance, seed, w, h)
+    img_name = ROOT_FOLDER + "i2i-%s_%s_%s_%s_%s_%s.png" % (sanitize(prompt),
+                                                            strength, guidance, seed, w, h)
     img_name = img_name.replace(' ', '-')
 
-    # no need to compute, return image path
-    # if os.path.exists(img_name) and seed != -1:
-    #     if DEBUG == True:
-    #         print("image already exists")
-    #     return img_name
-    # else:
     if DEBUG == True:
         print("compute new image: ")
         print("\t prompt: ", prompt)
         print("\t strength: ", strength)
         print("\t guidance: ", guidance)
-        # print("\t img_name: ", img_name)
+        print("\t seed: ", seed)
 
     # perform image 2 image
     with autocast("cuda"):

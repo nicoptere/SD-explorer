@@ -7,19 +7,8 @@ from basicsr.archs.rrdbnet_arch import RRDBNet
 from realesrgan import RealESRGANer
 from realesrgan.archs.srvgg_arch import SRVGGNetCompact
 
-# creates a folder to store the images
-ROOT_FOLDER = "results/upscale/"
-os.makedirs(ROOT_FOLDER, exist_ok=True)
-
-DEBUG = True
-
-
-def sanitize(text):
-    # removes invalid characters from the prompt
-    stripped_text = ''
-    for c in text:
-        stripped_text += c if len(c.encode(encoding='utf_8')) == 1 else ''
-    return stripped_text
+# import shared settings
+from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize
 
 
 @pytalk_method('upscale')
@@ -27,7 +16,7 @@ def upscale(name, face_enhance=True, outscale=4, model_name='RealESRGAN_x4plus')
 
     face_enhance = bool(face_enhance)
     outscale = int(outscale)
-    input = "results/tmp/upscale-tmp.jpg"
+    input = TMP_FOLDER + "upscale-tmp.jpg"
 
     output = ROOT_FOLDER
     suffix = ""
