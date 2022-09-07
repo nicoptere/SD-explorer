@@ -24,7 +24,7 @@ export default class DrawingPad {
       this.update(e);
     });
     // this._locked = true;
-    // this.hide();
+    this.hide();
   }
   get locked() {
     return this._locked;
