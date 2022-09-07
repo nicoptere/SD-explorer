@@ -4,7 +4,7 @@ import History from "./js/History";
 import { Prompter } from "./js/Prompter";
 import UI from "./js/UI";
 import Region from "./js/Region";
-import { saveCanvas } from "./js/ImageUtils";
+import { crop, saveCanvas } from "./js/ImageUtils";
 import UpscalePreview from "./js/UpscalePreview";
 
 let canvas, socket, region, ui, history, drawPad, upscale;
@@ -133,7 +133,7 @@ export default class App {
 
       //save the cropped image and call the img2img function:
       // crop and convert to Blob
-      const crop = canvas.crop(this.source, region.rect);
+      const crop = crop(this.source, region.rect);
       crop.toBlob(
         (blob) => {
           // tell node to save to disk
@@ -155,16 +155,19 @@ export default class App {
 
       //save the cropped image and call the img2img function:
       // crop and convert to Blob
-      const crop = canvas.crop(this.source, region.rect);
-      crop.toBlob(
+      const image = crop(this.source, region.rect);
+      image.toBlob(
         (blob) => {
           // tell node to save to disk
           socket.emit("save_image", "results/tmp/inp-tmp.jpg", blob);
           // when the source is saved,
           socket.once("on_image_saved", () => {
             //  save the mask
-            drawPad.canvas.toBlob(
+            const mask = crop(drawPad.canvas, region.rect);
+            mask.toBlob(
               (blob) => {
+                // remove the rect from the drawing
+                drawPad.clearRect(region.rect);
                 // tell node to save to disk
                 socket.emit("save_image", "results/tmp/inp-msk.jpg", blob);
                 //
@@ -173,8 +176,6 @@ export default class App {
                   // call inpainting
                   socket.emit("inpainting", ui.getConfig(object));
                   region.showThrobber();
-                  //clear the mask
-                  drawPad.clear();
                 });
               },
               "image/jpeg",
@@ -192,7 +193,7 @@ export default class App {
     ui.on("upscale", (object) => {
       if (!isReady(object)) return;
       // crop and convert to Blob
-      const crop = canvas.crop(this.source, region.rect);
+      const crop = crop(this.source, region.rect);
       crop.toBlob(
         (blob) => {
           // tell node to save to disk
@@ -219,7 +220,6 @@ export default class App {
       const w = ui.region.width;
       const h = ui.region.height;
       region.resize(w, h);
-      drawPad.resize(w, h);
     };
     ui.region.bindings.width.on("change", resize_zone);
     ui.region.bindings.height.on("change", resize_zone);
@@ -234,10 +234,12 @@ export default class App {
     ui.canvas.bindings.width.on("change", (e) => {
       if (e.last == false) return;
       canvas.setSize(e.value, canvas.height);
+      drawPad.setSize(e.value, canvas.height);
     });
     ui.canvas.bindings.height.on("change", (e) => {
       if (e.last == false) return;
       canvas.setSize(canvas.width, e.value);
+      drawPad.setSize(canvas.width, e.value);
     });
     ui.canvas.bindings.color.on("change", (e) => {
       canvas.setClearColor(e.value);

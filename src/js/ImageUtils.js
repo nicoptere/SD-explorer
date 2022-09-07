@@ -3,6 +3,21 @@
 
 import saveAs from "file-saver";
 const JPG_QUALITY = 0.95; //TODO move to config
+
+// tmp vars for cropping
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+export function crop(imageOrCanvas, rect) {
+  const x = ~~rect.x;
+  const y = ~~rect.y;
+  const w = ~~rect.width;
+  const h = ~~rect.height;
+  ctx.canvas.width = w;
+  ctx.canvas.height = h;
+  ctx.drawImage(imageOrCanvas, x, y, w, h, 0, 0, w, h);
+  return canvas;
+}
+
 function imageUrlToBlob(imageURL, callback) {
   const img = new Image();
   img.crossOrigin = "";

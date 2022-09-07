@@ -63,19 +63,6 @@ export default class Canvas {
     }
   }
 
-  crop(imageOrCanvas, rect) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const x = ~~rect.x;
-    const y = ~~rect.y;
-    const w = ~~rect.width;
-    const h = ~~rect.height;
-    ctx.canvas.width = w;
-    ctx.canvas.height = h;
-    ctx.drawImage(imageOrCanvas, x, y, w, h, 0, 0, w, h);
-    return canvas;
-  }
-
   drawImageAt(img, x, y) {
     return ctx.drawImage(
       img,

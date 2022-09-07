@@ -10,9 +10,10 @@ body {
 .main-canvas {
   pointer-events: none;
   position: absolute;
-  /* top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); */
+}
+.drawpad-canvas {
+  position: absolute;
+  z-index: 10;
 }
 .fade-in {
   opacity: 1;
@@ -73,8 +74,8 @@ body {
 }
 #drag {
   z-index: 10000;
-  position: absolute;
-  /* position: fixed; */
+  /* position: absolute; */
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

@@ -1,8 +1,8 @@
 export const CONFIG = {
   settings: {
     // init prompts
-    promptKeyword: null,
-    randomizePrompts: true,
+    promptKeyword: "portrait", //null,//
+    randomizePrompts: false,
 
     // default parameters values
     options: {
@@ -36,14 +36,14 @@ export const CONFIG = {
         max: 256,
         step: 1,
       },
-      zone_size: {
+      region_size: {
         value: 512,
         min: 64,
-        max: 512,
+        max: 768,
         step: 64,
       },
       canvas_size: {
-        value: 1024,
+        value: 2048,
         min: 64,
         max: 4096,
         step: 1,

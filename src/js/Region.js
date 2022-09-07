@@ -20,9 +20,8 @@ export default class Region {
 
     region = document.getElementById("region");
 
-    // draw area for inpainting
+    // draw canvas for inpainting
     this.drawPad = new DrawingPad(ui);
-    region.appendChild(this.drawPad.canvas);
 
     window.addEventListener("keydown", (e) => {
       SPACE = e.key == " ";

@@ -1,11 +1,15 @@
 import Hammer from "hammerjs";
+import { CONFIG } from "./Config";
 // TODO:
 // free drawing on the image => isolate mask blobs => send in bacth to inpainting
 export default class DrawingPad {
   constructor(ui) {
     this.ui = ui;
-    this.ctx = this.getContext(512, 512);
+    const size = CONFIG.settings.options.canvas_size.value;
+    this.ctx = this.getContext(size, size);
     this.canvas = this.ctx.canvas;
+    this.canvas.classList.add("drawpad-canvas");
+    document.body.appendChild(this.canvas);
 
     const settings = ui.inpainting.drawing;
     this.brush = settings;
@@ -19,10 +23,8 @@ export default class DrawingPad {
     mc.on("panstart pan panend", (e) => {
       this.update(e);
     });
-    this._locked = true;
-    this.tick = 0;
-    this.every = 3;
-    this.hide();
+    // this._locked = true;
+    // this.hide();
   }
   get locked() {
     return this._locked;
@@ -31,23 +33,28 @@ export default class DrawingPad {
     this._locked = v;
   }
 
+  setSize(w, h) {
+    this.canvas.width = w;
+    this.canvas.height = h;
+    this.clear();
+  }
+  clearRect(rect) {
+    this.ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
+  }
   clear() {
+    // this.ctx.fillStyle = "#F00";
+    // this.ctx.globalAlpha = 0.25;
+    // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  resize(w, h) {
-    this.canvas.width = w;
-    this.canvas.height = h;
-  }
-
   show() {
-    this.canvas.classList.remove("fade-out");
-    this.canvas.classList.add("fade-in");
+    this.canvas.classList.remove("hidden");
   }
 
   hide() {
-    this.canvas.classList.add("fade-out");
-    this.canvas.classList.remove("fade-in");
+    this.canvas.classList.add("hidden");
   }
 
   resetBrush() {
@@ -62,8 +69,7 @@ export default class DrawingPad {
   }
 
   update(e) {
-    if (this.tickk++ % this.every != 0) return;
-    if (this.locked) return;
+    // if (this.locked) return;
 
     let rect = this.canvas.getBoundingClientRect();
     let size = this.brush.brush_size;
@@ -72,6 +78,7 @@ export default class DrawingPad {
     if (this.brush.pattern == undefined) {
       this.resetBrush();
     }
+
     this.ctx.fillStyle = this.brush.pattern;
     this.ctx.globalAlpha = this.brush.alpha;
     this.ctx.save();
