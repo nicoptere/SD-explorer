@@ -38,7 +38,7 @@ export default class InpaintingTab extends Tab {
         },
       },
       //ADD folder + settings (keyboard shortcuts) + source
-      draw: {
+      drawing: {
         type: "folder",
         brush_size,
         softness: unit,

@@ -2,11 +2,12 @@ import Hammer from "hammerjs";
 // TODO:
 // free drawing on the image => isolate mask blobs => send in bacth to inpainting
 export default class DrawingPad {
-  constructor(settings) {
+  constructor(ui) {
+    this.ui = ui;
     this.ctx = this.getContext(512, 512);
     this.canvas = this.ctx.canvas;
-    this.hide();
 
+    const settings = ui.inpainting.drawing;
     this.brush = settings;
     this.resetBrush();
 
@@ -18,7 +19,10 @@ export default class DrawingPad {
     mc.on("panstart pan panend", (e) => {
       this.update(e);
     });
-    this._locked = false;
+    this._locked = true;
+    this.tick = 0;
+    this.every = 3;
+    this.hide();
   }
   get locked() {
     return this._locked;
@@ -39,25 +43,26 @@ export default class DrawingPad {
   show() {
     this.canvas.classList.remove("fade-out");
     this.canvas.classList.add("fade-in");
-    this.locked = false;
   }
 
   hide() {
     this.canvas.classList.add("fade-out");
     this.canvas.classList.remove("fade-in");
-    this.locked = true;
   }
 
   resetBrush() {
-    let soft = this.brush.softness;
+    let soft = 1 - this.brush.softness;
     let size = this.brush.brush_size;
+    let alpha = this.brush.alpha;
     let r = size / 2;
     this.brush.pattern = this.ctx.createRadialGradient(r, r, 0, r, r, r);
-    this.brush.pattern.addColorStop(0, `rgba(255,255,255,${soft})`);
+    this.brush.pattern.addColorStop(0, `rgba(255,255,255,1`);
+    this.brush.pattern.addColorStop(soft, `rgba(255,255,255,${alpha})`);
     this.brush.pattern.addColorStop(1, `rgba(255,255,255,0)`);
   }
 
   update(e) {
+    if (this.tickk++ % this.every != 0) return;
     if (this.locked) return;
 
     let rect = this.canvas.getBoundingClientRect();

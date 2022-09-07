@@ -1,7 +1,5 @@
 import { io } from "socket.io-client";
 import Canvas from "./js/Canvas";
-import Draggable from "draggable";
-import DrawingPad from "./js/DrawingPad";
 import History from "./js/History";
 import { Prompter } from "./js/Prompter";
 import UI from "./js/UI";
@@ -32,8 +30,7 @@ export default class App {
     region = new Region(ui);
 
     // draw area for inpainting
-    drawPad = new DrawingPad(ui.inpainting.draw);
-    region.element.appendChild(drawPad.canvas);
+    drawPad = region.drawPad;
 
     // undo (/redo?)
     history = new History(canvas, ui);
@@ -63,7 +60,7 @@ export default class App {
           //push to history
           history.pushState(image, rect);
         };
-        console.log(data.value);
+        // console.log(data.value);
         image.setAttribute("src", data.value);
       } else {
         // TODO handle errors ( => Console?)

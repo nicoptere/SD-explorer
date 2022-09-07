@@ -1,5 +1,7 @@
 import Draggable from "draggable";
+import DrawingPad from "./DrawingPad";
 let throbber, drag, region;
+let SPACE = false;
 export default class Region {
   constructor(ui) {
     throbber = document.getElementById("throbber");
@@ -11,11 +13,25 @@ export default class Region {
         y: [256 + 12, 4096],
       },
       filterTarget: (e) => {
-        return e == drag || ui.tabIndex != 2;
+        return e == drag || ui.tabIndex != 2 || SPACE == false;
       },
     });
+    drag.style.removeProperty("position");
+
     region = document.getElementById("region");
-    this.element = region;
+
+    // draw area for inpainting
+    this.drawPad = new DrawingPad(ui);
+    region.appendChild(this.drawPad.canvas);
+
+    window.addEventListener("keydown", (e) => {
+      SPACE = e.key == " ";
+      this.drawPad.locked = !SPACE;
+    });
+    window.addEventListener("keyup", () => {
+      SPACE = false;
+      this.drawPad.locked = !SPACE;
+    });
   }
 
   get rect() {
