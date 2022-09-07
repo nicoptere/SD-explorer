@@ -1,3 +1,5 @@
+import { CONFIG } from "./Config";
+
 let canvas;
 let ctx;
 export default class Canvas {
@@ -44,8 +46,8 @@ export default class Canvas {
   }
 
   setSize(w, h) {
-    canvas.width = w || window.innerWidth;
-    canvas.height = h || window.innerHeight;
+    canvas.width = w || CONFIG.settings.options.canvas_size.value;
+    canvas.height = h || CONFIG.settings.options.canvas_size.value;
     this.clear();
   }
 
