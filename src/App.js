@@ -193,11 +193,11 @@ export default class App {
     ui.on("upscale", (object) => {
       if (!isReady(object)) return;
       // crop and convert to Blob
-      const crop = crop(this.source, region.rect);
-      crop.toBlob(
+      const image = crop(this.source, region.rect);
+      image.toBlob(
         (blob) => {
           // tell node to save to disk
-          socket.emit("save_image", "results/tmp/upscale-tmp.jpg", blob);
+          socket.emit("save_image", "results/tmp/upscale-tmp.jpg", blob); //TODO pass TMP folder from server
           //once it's saved, call the img2img
           socket.once("on_image_saved", () => {
             socket.emit("upscale", ui.getConfig(object));
