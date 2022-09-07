@@ -22,6 +22,7 @@ export default class UI extends EventEmitter {
         return e == panel;
       },
     });
+    panel.style.removeProperty("position");
 
     const container = panel.querySelector(".settings-contents");
     pane = new Pane({ container });

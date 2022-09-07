@@ -10,6 +10,7 @@ export default class UpscalePreview {
         return e == upscale || e == drag;
       },
     });
+    upscale.style.removeProperty("position");
     upscale.style.removeProperty("width");
     upscale.style.removeProperty("height");
 
@@ -52,7 +53,7 @@ export default class UpscalePreview {
   applyScale = () => {
     const w = Math.max(preview.naturalWidth, 512);
     const h = Math.max(preview.naturalHeight, 512);
-    console.log(w, h);
+    // console.log(w, h);
     preview.scale = Math.min(Math.max(0.25, preview.scale), 1);
     const s = preview.scale;
     preview.style.width = `${s * w}`;
