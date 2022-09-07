@@ -1,13 +1,13 @@
 import { CONFIG } from "../Config";
-const zone_size = CONFIG.settings.options.zone_size;
+const region_size = CONFIG.settings.options.region_size;
 const canvas_size = CONFIG.settings.options.canvas_size;
 const unit = CONFIG.settings.options.unit;
 
 export default class ImageAndRegionPanel {
   constructor(scope, pane) {
     scope.region = {
-      width: zone_size,
-      height: zone_size,
+      width: region_size,
+      height: region_size,
     };
     pane.addSeparator();
     const region = pane.addFolder({ title: "region", expanded: true });
