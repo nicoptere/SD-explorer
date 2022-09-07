@@ -41,7 +41,7 @@ app.listen(PORT, IP || "localhost", () => {
   console.log(`Listening to requests on http://localhost:${PORT}`); //TODO: allow connection from device
 });
 
-//this is where the images will be generated ( see ROOT_FOLDER in python files )
+//this is where the images will be generated ( see ROOT_FOLDER in python/common.py )
 const ROOT_FOLDER = "results";
 app.use(express.static("results"));
 
@@ -61,43 +61,28 @@ let BUSY = false;
 
 // hook the PYTHON methods:
 
-function onComplete(error, value) {
-  if (callBackCount++ == 0) {
-    // TODO improve error handling + unify callback
-    if (debug) {
-      console.log("node: inference error?", error);
-    }
-    SOCKET.emit("image_ready", {
-      error,
-      value: value.replace(ROOT_FOLDER, ""),
-    });
-    // unlock
-    BUSY = false;
-  }
-}
-
 // infernece
 
 let inference_worker = pytalk.worker("python/inference_worker.py");
+let init_inference = inference_worker.method("initialize");
 let inference = inference_worker.method("inference");
 function callInference(data) {
-  if (debug) console.log("node: inference data", data);
-
   //lock
-  if (BUSY) return;
+  if (BUSY) return SOCKET.emit("busy");
   BUSY = true;
   callBackCount = 0;
-
-  // parse parameters
-  const prompt = data.prompt;
-  const steps = data.steps;
-  const guidance = data.guidance;
-  const seed = data.seed;
-  const width = data.width;
-  const height = data.height;
+  if (debug) console.log("node: inference data", data);
 
   // call the python method
-  inference(prompt, steps, guidance, seed, width, height, onComplete);
+  inference(
+    data.prompt,
+    data.steps,
+    data.guidance,
+    data.seed,
+    data.width,
+    data.height,
+    onDiffusionComplete
+  );
 }
 
 // image to image
@@ -105,23 +90,22 @@ function callInference(data) {
 let img2img_worker = pytalk.worker("python/image_to_image_worker.py");
 let img2img = img2img_worker.method("img2img");
 function callImage2Image(data) {
-  if (debug) console.log("node: image to image data", data);
-
   //lock
-  if (BUSY) return;
+  if (BUSY) return SOCKET.emit("busy");
   BUSY = true;
   callBackCount = 0;
-
-  // parse parameters
-  const prompt = data.prompt;
-  const strength = data.strength;
-  const guidance = data.guidance;
-  const seed = data.seed;
-  const width = data.width;
-  const height = data.height;
+  if (debug) console.log("node: image to image data", data);
 
   // call image ot image
-  img2img(prompt, strength, guidance, seed, width, height, onComplete);
+  img2img(
+    data.prompt,
+    data.strength,
+    data.guidance,
+    data.seed,
+    data.width,
+    data.height,
+    onDiffusionComplete
+  );
 }
 
 // inpainting
@@ -129,57 +113,63 @@ function callImage2Image(data) {
 let inpainting_worker = pytalk.worker("python/inpainting_worker.py");
 let inpainting = inpainting_worker.method("inpainting");
 function callInpainting(data) {
-  if (debug) console.log("node: inpainting data", data);
-
   //lock
-  if (BUSY) return;
+  if (BUSY) return SOCKET.emit("busy");
   BUSY = true;
   callBackCount = 0;
-
-  // parse parameters
-  const prompt = data.prompt;
-  const strength = data.strength;
-  const guidance = data.guidance;
-  const seed = data.seed;
-  const width = data.width;
-  const height = data.height;
+  if (debug) console.log("node: inpainting data", data);
 
   // call image ot image
-  inpainting(prompt, strength, guidance, seed, width, height, onComplete);
+  inpainting(
+    data.prompt,
+    data.strength,
+    data.guidance,
+    data.seed,
+    data.width,
+    data.height,
+    onDiffusionComplete
+  );
 }
 
-// upsale
+function onDiffusionComplete(error, value) {
+  if (callBackCount++ == 0) {
+    if (error) console.log("PYTHON", error);
+    SOCKET.emit("image_ready", {
+      error,
+      value: value.replace(ROOT_FOLDER, ""),
+    });
+    BUSY = false;
+  }
+}
+
+// upscale
 
 let upscale_worker = pytalk.worker("python/upscale_worker.py");
 let upscale = upscale_worker.method("upscale");
 function callUpscale(data) {
-  if (debug) console.log("node: upscale data", data);
-
   //lock
-  if (BUSY) return;
+  if (BUSY) return SOCKET.emit("busy");
   BUSY = true;
   callBackCount = 0;
+  if (debug) console.log("node: upscale data", data);
 
-  // parse parameters
-  const name = data.name;
-  const face = data.enhance_face;
-  const scale = data.scale;
-  const model = data.model;
-
-  // call image ot image
-  upscale(name, face, scale, model, onUpscaleComplete);
+  // call upscale
+  upscale(
+    data.name,
+    data.enhance_face,
+    data.scale,
+    data.model,
+    onUpscaleComplete
+  );
 }
+
 function onUpscaleComplete(error, value) {
   if (callBackCount++ == 0) {
-    // TODO improve error handling + unify callback
-    if (debug) {
-      console.log("node: inference error?", error);
-    }
+    if (error) console.log("PYTHON", error);
     SOCKET.emit("upscale_ready", {
       error,
       value: value.replace(ROOT_FOLDER, ""),
     });
-    // unlock
     BUSY = false;
   }
 }
@@ -187,5 +177,6 @@ function onUpscaleComplete(error, value) {
 // forces the process to quit (on Windows, it sometimes refuses to DIE!! )
 var ON_DEATH = require("death");
 ON_DEATH(() => {
+  console.log("DIE!!");
   process.exit();
 });
