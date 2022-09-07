@@ -6,7 +6,6 @@ body {
   padding: 0;
   background-image: url("../images/background.jpg");
 }
-
 /* ------------- */
 .main-canvas {
   pointer-events: none;
@@ -22,6 +21,12 @@ body {
   opacity: 0;
 }
 
+/* TODO refactor  */
+#App {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+}
 .settings-draggable {
   background-color: #4b4b4b;
   background-image: url("../svg/move-white.svg");
@@ -34,10 +39,7 @@ body {
   width: 320px;
   color: #000;
   padding-top: 24px;
-  position: absolute;
   border-radius: 6px 6px 0 0;
-  top: 16px;
-  left: 16px;
 }
 .settings-contents {
   cursor: auto;
@@ -45,6 +47,7 @@ body {
 }
 
 #region {
+  touch-action: none;
   position: relative;
   cursor: auto;
   display: block;
@@ -71,6 +74,7 @@ body {
 #drag {
   z-index: 10000;
   position: absolute;
+  /* position: fixed; */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -127,18 +131,18 @@ body {
 #upscale {
   z-index: 10000;
   display: inline-block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  /* position: absolute; */
+  position: fixed;
+  top: 48px;
+  right: 48px;
   border: 0;
   width: auto;
-  background-color: rgba(0, 0, 0, 0.25);
-  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 16px solid rgba(0, 0, 0, 0.025);
   padding-bottom: 0;
 }
 .upscale-resizable {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: #303030;
   resize: both;
   overflow: auto;
   width: 512px;
@@ -148,6 +152,61 @@ body {
   pointer-events: none;
   user-select: none;
 }
+
+/* tweakpane */
+:root {
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+.tp-lblv_l {
+}
+.tp-lblv_v {
+  flex-grow: 1;
+  line-height: 24px;
+}
+.tp-btnv_b {
+  font-size: 36px;
+  padding: 4px;
+  line-height: 36px;
+  height: 36px;
+}
+.tp-btnv_t {
+  color: red;
+  font-size: 20px;
+  line-height: 36px;
+  height: 36px;
+  font-family: Material Symbols Outlined;
+}
+
+:root {
+  --tp-button-background-color: white;
+  --bld-us: 36px;
+  --tp-blade-unit-size: 30px;
+}
+/*
+:root {
+  --tp-base-background-color: hsla(40, 3%, 90%, 1);
+  --tp-base-shadow-color: hsla(0, 0%, 0%, 0.3);
+  --tp-button-background-color: hsla(40, 3%, 70%, 1);
+  --tp-button-background-color-active: hsla(40, 3%, 55%, 1);
+  --tp-button-background-color-focus: hsla(40, 3%, 60%, 1);
+  --tp-button-background-color-hover: hsla(40, 3%, 65%, 1);
+  --tp-button-foreground-color: hsla(40, 3%, 20%, 1);
+  --tp-container-background-color: hsla(40, 3%, 70%, 1);
+  --tp-container-background-color-active: hsla(40, 3%, 55%, 1);
+  --tp-container-background-color-focus: hsla(40, 3%, 60%, 1);
+  --tp-container-background-color-hover: hsla(40, 3%, 65%, 1);
+  --tp-container-foreground-color: hsla(40, 3%, 20%, 1);
+  --tp-groove-foreground-color: hsla(40, 3%, 40%, 1);
+  --tp-input-background-color: hsla(120, 3%, 20%, 1);
+  --tp-input-background-color-active: hsla(120, 3%, 35%, 1);
+  --tp-input-background-color-focus: hsla(120, 3%, 30%, 1);
+  --tp-input-background-color-hover: hsla(120, 3%, 25%, 1);
+  --tp-input-foreground-color: hsla(120, 40%, 60%, 1);
+  --tp-label-foreground-color: hsla(40, 3%, 50%, 1);
+  --tp-monitor-background-color: hsla(120, 3%, 20%, 1);
+  --tp-monitor-foreground-color: hsla(120, 40%, 60%, 0.8);
+}
+//*/
 
 /* from https://loading.io/css/ */
 .lds-ellipsis {
@@ -206,34 +265,3 @@ body {
   }
 }
 /* from https://loading.io/css/ */
-
-/* tweakpane */
-/* :root {
-  --font-family: Comics Sans;
-} */
-
-/*
-:root {
-  --tp-base-background-color: hsla(40, 3%, 90%, 1);
-  --tp-base-shadow-color: hsla(0, 0%, 0%, 0.3);
-  --tp-button-background-color: hsla(40, 3%, 70%, 1);
-  --tp-button-background-color-active: hsla(40, 3%, 55%, 1);
-  --tp-button-background-color-focus: hsla(40, 3%, 60%, 1);
-  --tp-button-background-color-hover: hsla(40, 3%, 65%, 1);
-  --tp-button-foreground-color: hsla(40, 3%, 20%, 1);
-  --tp-container-background-color: hsla(40, 3%, 70%, 1);
-  --tp-container-background-color-active: hsla(40, 3%, 55%, 1);
-  --tp-container-background-color-focus: hsla(40, 3%, 60%, 1);
-  --tp-container-background-color-hover: hsla(40, 3%, 65%, 1);
-  --tp-container-foreground-color: hsla(40, 3%, 20%, 1);
-  --tp-groove-foreground-color: hsla(40, 3%, 40%, 1);
-  --tp-input-background-color: hsla(120, 3%, 20%, 1);
-  --tp-input-background-color-active: hsla(120, 3%, 35%, 1);
-  --tp-input-background-color-focus: hsla(120, 3%, 30%, 1);
-  --tp-input-background-color-hover: hsla(120, 3%, 25%, 1);
-  --tp-input-foreground-color: hsla(120, 40%, 60%, 1);
-  --tp-label-foreground-color: hsla(40, 3%, 50%, 1);
-  --tp-monitor-background-color: hsla(120, 3%, 20%, 1);
-  --tp-monitor-foreground-color: hsla(120, 40%, 60%, 0.8);
-}
-//*/
