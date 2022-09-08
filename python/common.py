@@ -34,13 +34,13 @@ DEVICE = Device()
     use_auth_token=True
 """
 
-
 # creates a folder to store the images
-TMP_FOLDER = "results/tmp/"
-os.makedirs(TMP_FOLDER, exist_ok=True)
 
 ROOT_FOLDER = "results/"
 os.makedirs(ROOT_FOLDER, exist_ok=True)
+
+TMP_FOLDER = "results/tmp/"
+os.makedirs(TMP_FOLDER, exist_ok=True)
 
 
 def sanitize(text):

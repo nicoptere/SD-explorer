@@ -4,7 +4,7 @@ from torch import autocast
 import os
 
 # import shared settings
-from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize
+from python.common import DEVICE, ROOT_FOLDER, DEBUG, sanitize
 
 # inference
 from python.inference import StableDiffusionPipeline
@@ -63,8 +63,8 @@ def inference(prompt, steps=50, guidance=7.5, seed=-1, w=512, h=512):
         seed = generator.seed()
 
     # create the output file name
-    img_name = ROOT_FOLDER + "inf-%s_%s_%s_%s_%s_%s.png" % (sanitize(prompt),
-                                                            steps, guidance, seed, w, h)
+    img_name = ROOT_FOLDER + "inference/inf-%s_%s_%s_%s_%s_%s.png" % (sanitize(prompt),
+                                                                      steps, guidance, seed, w, h)
     img_name = img_name.replace(' ', '-')
 
     # no need to compute, return image path

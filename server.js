@@ -133,12 +133,15 @@ function callInpainting(data) {
 
 function onDiffusionComplete(error, value) {
   if (callBackCount++ == 0) {
-    if (error) console.log("PYTHON", error);
+    BUSY = false;
+    if (error != false) {
+      console.log("PYTHON", error);
+      return SOCKET.emit("image_error", { error });
+    }
+    console.log("image ready");
     SOCKET.emit("image_ready", {
-      error,
       value: value.replace(ROOT_FOLDER, ""),
     });
-    BUSY = false;
   }
 }
 
@@ -165,12 +168,14 @@ function callUpscale(data) {
 
 function onUpscaleComplete(error, value) {
   if (callBackCount++ == 0) {
-    if (error) console.log("PYTHON", error);
+    BUSY = false;
+    if (error != false) {
+      console.log("PYTHON", error);
+      return SOCKET.emit("upscale_error", { error });
+    }
     SOCKET.emit("upscale_ready", {
-      error,
       value: value.replace(ROOT_FOLDER, ""),
     });
-    BUSY = false;
   }
 }
 

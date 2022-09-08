@@ -62,9 +62,8 @@ def inpainting(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
         seed = generator.seed()
 
     # create the output file name
-    img_name = ROOT_FOLDER + \
-        "inp-%s_%s_%s_%s_%s_%s.png" % (sanitize(prompt),
-                                       strength, guidance, seed, w, h)
+    img_name = ROOT_FOLDER + "inpainting/inp-%s_%s_%s_%s_%s_%s.png" % (sanitize(prompt),
+                                                                       strength, guidance, seed, w, h)
     img_name = img_name.replace(' ', '-')
 
     if DEBUG == True:
