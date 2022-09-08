@@ -1,13 +1,13 @@
 export const CONFIG = {
   settings: {
     // init prompts
-    promptKeyword: "portrait", //null,//
-    randomizePrompts: false,
+    promptKeyword: null, // "portrait", //
+    randomizePrompts: true, //false,
 
     // default parameters values
     options: {
       seed: {
-        value: 1,
+        value: -1,
         min: -1,
         max: 10000,
         step: 1,
