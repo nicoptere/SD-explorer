@@ -50,32 +50,27 @@ export default class App {
     });
 
     // draws the image to canvas whenever a function is finished
+    socket.on("image_error", (data) => {});
     socket.on("image_ready", (data) => {
-      if (data.error == false) {
-        const image = new Image();
-        image.onload = () => {
-          let rect = region.rect;
-          //draw to canvas
-          canvas.drawImageAt(image, rect.x, rect.y);
-          //push to history
-          history.pushState(image, rect);
-        };
-        // console.log(data.value);
-        image.setAttribute("src", data.value);
-      } else {
-        // TODO handle errors ( => Console?)
-      }
+      const image = new Image();
+      image.onload = () => {
+        let rect = region.rect;
+        //draw to canvas
+        canvas.drawImageAt(image, rect.x, rect.y);
+        //push to history
+        history.pushState(image, rect);
+      };
+      console.log(data.value);
+      image.setAttribute("src", data.value);
+
       region.hideThrobber();
       locked = false;
     });
 
     // upscale
+    socket.on("upscale_error", (data) => {});
     socket.on("upscale_ready", (data) => {
-      if (data.error == false) {
-        upscale.setSource(data.value);
-      } else {
-        // TODO handle errors ( => Console)
-      }
+      upscale.setSource(data.value);
       region.hideThrobber();
       locked = false;
     });
@@ -221,8 +216,8 @@ export default class App {
       const h = ui.region.height;
       region.resize(w, h);
     };
-    ui.region.bindings.width.on("change", resize_zone);
-    ui.region.bindings.height.on("change", resize_zone);
+    ui.region.bindings.width.on("change", resize_zone); //
+    ui.region.bindings.height.on("change", resize_zone); //
     // clear
     ui.on("clear_drawpad", drawPad.clear.bind(drawPad));
 
