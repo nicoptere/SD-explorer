@@ -26,8 +26,15 @@ export default class App {
     //default source is the working canvas
     this.source = canvas.element;
 
+    ui.on("resize_canvas", canvas.resize.bind(canvas));
+    ui.on("canvas_color", canvas.setClearColor.bind(canvas));
+    canvas.setClearColor(ui.image.canvas.color);
+    ui.on("canvas_grain", canvas.setGrain.bind(canvas));
+    canvas.grain = ui.image.canvas.grain;
+
     //draggable area
     region = new Region(ui);
+    ui.on("resize_region", region.resize.bind(region));
 
     // draw area for inpainting
     drawPad = region.drawPad;
@@ -37,6 +44,25 @@ export default class App {
 
     //upscale preview
     upscale = new UpscalePreview();
+
+    // manage tab change
+    ui.on("tab_change", (index) => {
+      drawPad.hide();
+      upscale.hide();
+      switch (index) {
+        case 0:
+        case 1:
+          break;
+        case 2:
+          drawPad.show();
+          break;
+        case 3:
+          upscale.show();
+          break;
+        default:
+          return;
+      }
+    });
 
     // logic
 
@@ -79,31 +105,6 @@ export default class App {
     // CTRL click to drag region on inpainting
     //auto detect  inpainting regions + queue
 
-    // manage tab change
-    ui.on("tab_change", (index) => {
-      drawPad.hide();
-      upscale.hide();
-      switch (index) {
-        case 0:
-        case 1:
-          break;
-        case 2:
-          drawPad.show();
-          break;
-        case 3:
-          upscale.show();
-          break;
-        default:
-          return;
-      }
-    });
-
-    // randomizze a prompt
-    ui.on("randomize", (object) => {
-      const field = object.field;
-      field.value = Prompter.next();
-    });
-
     // check if we can proceed
     const isReady = (object) => {
       const config = ui.getConfig(object);
@@ -128,8 +129,8 @@ export default class App {
 
       //save the cropped image and call the img2img function:
       // crop and convert to Blob
-      const crop = crop(this.source, region.rect);
-      crop.toBlob(
+      const image = crop(this.source, region.rect);
+      image.toBlob(
         (blob) => {
           // tell node to save to disk
           socket.emit("save_image", "results/tmp/i2i-tmp.jpg", blob);
@@ -207,43 +208,6 @@ export default class App {
     ui.on("save_upscale", () => {
       upscale.save();
     });
-
-    //region settings
-
-    //resize
-    const resize_zone = () => {
-      const w = ui.region.width;
-      const h = ui.region.height;
-      region.resize(w, h);
-    };
-    ui.region.bindings.width.on("change", resize_zone);
-    ui.region.bindings.height.on("change", resize_zone);
-    // clear
-    ui.on("clear_drawpad", drawPad.clear.bind(drawPad));
-
-    // canvas settings
-
-    //resize
-    ui.canvas.width = canvas.width;
-    ui.canvas.height = canvas.height;
-    ui.canvas.bindings.width.on("change", (e) => {
-      if (e.last == false) return;
-      canvas.setSize(e.value, canvas.height);
-      drawPad.setSize(e.value, canvas.height);
-    });
-    ui.canvas.bindings.height.on("change", (e) => {
-      if (e.last == false) return;
-      canvas.setSize(canvas.width, e.value);
-      drawPad.setSize(canvas.width, e.value);
-    });
-    ui.canvas.bindings.color.on("change", (e) => {
-      canvas.setClearColor(e.value);
-    });
-    canvas.setClearColor(ui.canvas.color);
-    ui.canvas.bindings.grain.on("change", (e) => {
-      if (e.last) canvas.grain = e.value;
-    });
-    canvas.grain = ui.canvas.grain;
 
     //clear canvas
     ui.on("clear", () => {

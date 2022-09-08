@@ -45,5 +45,6 @@ export default class ImagePanel extends Panel {
     this.addInput(this.canvas, "color");
     this.addInput(this.canvas, "grain");
     this.buttonGrid(canvas, this.canvas.actions);
+    this.grow();
   }
 }

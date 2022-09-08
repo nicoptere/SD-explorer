@@ -4,20 +4,22 @@ import { CONFIG } from "./Config";
 // free drawing on the image => isolate mask blobs => send in bacth to inpainting
 export default class DrawingPad {
   constructor(ui) {
-    this.ui = ui;
     const size = CONFIG.settings.options.canvas_size.value;
     this.ctx = this.getContext(size, size);
     this.canvas = this.ctx.canvas;
     this.canvas.classList.add("drawpad-canvas");
     document.body.appendChild(this.canvas);
 
-    const settings = ui.inpainting.drawing;
+    const settings = ui.drawing;
     this.brush = settings;
     this.resetBrush();
 
     //listen to changes in the params
-    settings.bindings.brush_size.on("change", this.resetBrush.bind(this));
+    settings.bindings.size.on("change", this.resetBrush.bind(this));
     settings.bindings.softness.on("change", this.resetBrush.bind(this));
+
+    // clear
+    settings.on("clear_drawpad", this.clear.bind(this));
 
     let mc = new Hammer(this.canvas);
     mc.on("panstart pan panend", (e) => {
@@ -33,7 +35,7 @@ export default class DrawingPad {
     this._locked = v;
   }
 
-  setSize(w, h) {
+  resize(w, h) {
     this.canvas.width = w;
     this.canvas.height = h;
     this.clear();
@@ -59,7 +61,7 @@ export default class DrawingPad {
 
   resetBrush() {
     let soft = 1 - this.brush.softness;
-    let size = this.brush.brush_size;
+    let size = this.brush.size;
     let alpha = this.brush.alpha;
     let r = size / 2;
     this.brush.pattern = this.ctx.createRadialGradient(r, r, 0, r, r, r);
@@ -72,7 +74,7 @@ export default class DrawingPad {
     // if (this.locked) return;
 
     let rect = this.canvas.getBoundingClientRect();
-    let size = this.brush.brush_size;
+    let size = this.brush.size;
     let x = ~~(e.center.x - size / 2) - rect.x;
     let y = ~~(e.center.y - size / 2) - rect.y;
     if (this.brush.pattern == undefined) {

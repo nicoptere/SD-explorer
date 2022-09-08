@@ -16,37 +16,55 @@ export default class TabsPanel extends Panel {
       seed,
       steps,
       guidance,
-      play_arrow: () => {
-        this.emit("inference", this.inference);
+      actions: {
+        type: "grid",
+        play_arrow: () => {
+          this.emit("inference");
+        },
+        undo: () => {
+          this.emit("undo");
+        },
       },
     };
     this.img2img = {
       seed,
       strength,
       guidance,
-      play_arrow: () => {
-        this.emit("inference", this.img2img);
+      actions: {
+        type: "grid",
+        play_arrow: () => {
+          this.emit("img2img");
+        },
+        undo: () => {
+          this.emit("undo");
+        },
       },
     };
     this.inpainting = {
       seed,
       strength,
       guidance,
-      play_arrow: () => {
-        this.emit("inpainting", this.inpainting);
+      actions: {
+        type: "grid",
+        play_arrow: () => {
+          this.emit("inpainting");
+        },
+        undo: () => {
+          this.emit("undo");
+        },
       },
     };
     this.upscale = {
       enhance_face: true,
-      model: "RealESRGAN_x4plus", //TODO model choice ?
       scale,
+      model: "RealESRGAN_x4plus", //TODO model choice ?
       actions: {
         type: "grid",
         play_arrow: () => {
-          this.emit("upscale", this.upscale);
+          this.emit("upscale");
         },
         save: () => {
-          this.emit("save_upscale");
+          this.emit("save");
         },
       },
     };
@@ -71,8 +89,7 @@ export default class TabsPanel extends Panel {
         ],
       })
       .on("select", (e) => {
-        this.tabIndex = e.index;
-        this.emit("tab_change", e.index);
+        this.emit("tab_change", e);
       });
 
     //   populate the menus

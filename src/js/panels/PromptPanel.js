@@ -22,6 +22,10 @@ export default class PromptPanel extends Panel {
     });
 
     this.buttonGrid(this.pane, buttons);
+    const els = this.element.querySelectorAll(".tp-lblv_l");
+    for (let e of els) {
+      e.parentNode.removeChild(e);
+    }
     this.grow(1);
   }
 }

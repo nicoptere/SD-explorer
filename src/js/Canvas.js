@@ -11,7 +11,7 @@ export default class Canvas {
     ctx.fillStyle = "#FFFFFF";
 
     this._grain = 0;
-    this.setSize(width, height);
+    this.resize(width, height);
   }
 
   get width() {
@@ -40,12 +40,15 @@ export default class Canvas {
     this.clear();
   }
 
+  setGrain(g) {
+    this.grain = g;
+  }
   setClearColor(c) {
     this.fillStyle = c;
     this.clear();
   }
 
-  setSize(w, h) {
+  resize(w, h) {
     canvas.width = w || CONFIG.settings.options.canvas_size.value;
     canvas.height = h || CONFIG.settings.options.canvas_size.value;
     this.clear();

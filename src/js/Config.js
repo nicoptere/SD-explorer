@@ -3,8 +3,8 @@ export const CONFIG = {
 
   settings: {
     // init prompts
-    promptKeyword: "portrait", // null, //
-    randomizePrompts: false, // true, //
+    promptKeyword: null, //"portrait", //
+    randomizePrompts: true, //false, //
 
     icons: {
       inference: "magic_button",
@@ -16,7 +16,7 @@ export const CONFIG = {
     // default parameters values
     options: {
       seed: {
-        value: 1,
+        value: -1,
         min: -1,
         max: 10000,
         step: 1,

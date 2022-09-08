@@ -38,17 +38,29 @@ export default class Panel extends EventEmitter {
   }
 
   grow(value = 1) {
+    // let els = this.element.querySelectorAll(".tp-lblv_l");
+    // for (let e of els) {
+    //   e.style.flex = "unset";
+    // }
     let els = this.element.querySelectorAll(".tp-lblv_v");
-    for (let i = 0; i < els.length; i++) {
-      els[i].style.flexGrow = value;
+    for (let e of els) {
+      e.style.flexGrow = value;
     }
   }
 
   addInput(object, key) {
     if (key === "pane" || key === "bindings") return;
+    if (key === "color") {
+      let control = object.pane.addInput(object, "color", {
+        picker: "inline",
+        // expanded: true,
+      });
+      object.bindings[key] = control;
+      return;
+    }
 
-    const type = typeof object[key];
     let control;
+    const type = typeof object[key];
     switch (type) {
       case "string":
       case "boolean":
@@ -75,7 +87,7 @@ export default class Panel extends EventEmitter {
 
   addTextArea(
     object,
-    key = "text",
+    key = "prompt",
     lineCount = 6,
     placeholder = "hic sunt dracones..."
   ) {

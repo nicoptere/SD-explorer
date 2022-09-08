@@ -4,7 +4,9 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-image: url("../images/background.jpg");
+  background-image: url("../images/background.png");
+  background-size: 16px 16px;
+  background-repeat: repeat;
 }
 /* ------------- */
 .main-canvas {

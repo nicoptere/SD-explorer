@@ -56,6 +56,7 @@ export default class Region {
     rect.style.height = v + "px";
   }
   resize(w, h) {
+    // console.log("resize", w, h);
     this.width = w;
     this.height = h;
     // this.draggable.limit = {
