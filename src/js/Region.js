@@ -1,6 +1,6 @@
 import Draggable from "draggable";
 import DrawingPad from "./DrawingPad";
-let throbber, drag, region;
+let throbber, drag, rect;
 let SPACE = false;
 export default class Region {
   constructor(ui) {
@@ -18,7 +18,7 @@ export default class Region {
     });
     drag.style.removeProperty("position");
 
-    region = document.getElementById("region");
+    rect = document.getElementById("region");
 
     // draw canvas for inpainting
     this.drawPad = new DrawingPad(ui);
@@ -34,7 +34,7 @@ export default class Region {
   }
 
   get rect() {
-    const r = region.getBoundingClientRect();
+    const r = rect.getBoundingClientRect();
     r.x += window.scrollX;
     r.y += window.scrollY;
     return r;
@@ -49,11 +49,11 @@ export default class Region {
   }
   set width(v) {
     drag.style.width = v + "px";
-    region.style.width = v + "px";
+    rect.style.width = v + "px";
   }
   set height(v) {
     drag.style.height = v + "px";
-    region.style.height = v + "px";
+    rect.style.height = v + "px";
   }
   resize(w, h) {
     this.width = w;
