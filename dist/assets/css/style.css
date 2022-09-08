@@ -15,36 +15,48 @@ body {
   position: absolute;
   z-index: 10;
 }
-.fade-in {
-  opacity: 1;
-}
-.fade-out {
-  opacity: 0;
-}
 
 /* TODO refactor  */
-#App {
+
+.panel-draggable {
   position: fixed;
   top: 16px;
   left: 16px;
-}
-.settings-draggable {
+  color: white;
   background-color: #4b4b4b;
-  background-image: url("../svg/move-white.svg");
-  background-size: 16px 16px;
-  background-position: 4px 4px;
-  background-repeat: no-repeat;
   cursor: move;
-  z-index: 100000;
+  z-index: 100;
   display: block;
   width: 320px;
+  height: fit-content;
   color: #000;
-  padding-top: 24px;
-  border-radius: 6px 6px 0 0;
+  border-radius: 6px;
+  /* transform: translate(); */
 }
-.settings-contents {
+.panel-contents {
+  display: block;
+  position: absolute;
+  top: 32px;
   cursor: auto;
   user-select: none;
+  width: 100%;
+}
+.label {
+  pointer-events: none;
+  color: white;
+  font-size: 16px;
+  position: absolute;
+  top: 6px;
+  left: 32px;
+}
+.picto {
+  pointer-events: none;
+  font-family: Material Symbols Outlined;
+  font-size: 20px;
+  line-height: 32px;
+  height: 32px;
+  color: white;
+  padding-left: 8px;
 }
 
 #region {
@@ -72,10 +84,10 @@ body {
   display: none;
   visibility: hidden;
 }
+
 #drag {
-  z-index: 10000;
+  z-index: 50;
   position: absolute;
-  /* position: fixed; */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -97,7 +109,7 @@ body {
   cursor: pointer;
   width: 24px;
   height: 24px;
-  background-color: #ff0000;
+  /* background-color: #ff0000; */
   color: white;
   background-size: 16px 16px;
   background-position: 4px 4px;
@@ -130,7 +142,7 @@ body {
 }
 
 #upscale {
-  z-index: 10000;
+  z-index: 100;
   display: inline-block;
   /* position: absolute; */
   position: fixed;
@@ -164,15 +176,18 @@ body {
   flex-grow: 1;
   line-height: 24px;
 }
-.tp-btnv_b {
+.tp-btnv_b,
+.tp-tbiv_b {
+  background-color: white;
   font-size: 36px;
   padding: 4px;
   line-height: 36px;
   height: 36px;
 }
-.tp-btnv_t {
+.tp-btnv_t,
+.tp-tbiv_t {
   color: rgb(77, 77, 77);
-  font-size: 18px;
+  font-size: 22px;
   height: 32px;
   line-height: 32px;
   font-family: Material Symbols Outlined;
