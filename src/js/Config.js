@@ -1,13 +1,22 @@
 export const CONFIG = {
+  methods: ["inference", "img2img", "inpainting", "upscale"],
+
   settings: {
     // init prompts
-    promptKeyword: null, // "portrait", //
-    randomizePrompts: true, //false,
+    promptKeyword: "portrait", // null, //
+    randomizePrompts: false, // true, //
+
+    icons: {
+      inference: "magic_button",
+      img2img: "image",
+      inpainting: "draw",
+      upscale: "zoom_out_map",
+    },
 
     // default parameters values
     options: {
       seed: {
-        value: -1,
+        value: 1,
         min: -1,
         max: 10000,
         step: 1,
@@ -45,7 +54,7 @@ export const CONFIG = {
       canvas_size: {
         value: 2048,
         min: 64,
-        max: 4096,
+        max: 8192,
         step: 1,
       },
       unit: {
@@ -53,6 +62,12 @@ export const CONFIG = {
         min: 0,
         max: 1,
         step: 0.01,
+      },
+      scale: {
+        value: 4,
+        min: 1,
+        max: 4,
+        step: 1,
       },
     },
 

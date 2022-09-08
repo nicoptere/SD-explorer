@@ -216,8 +216,8 @@ export default class App {
       const h = ui.region.height;
       region.resize(w, h);
     };
-    ui.region.bindings.width.on("change", resize_zone); //
-    ui.region.bindings.height.on("change", resize_zone); //
+    ui.region.bindings.width.on("change", resize_zone);
+    ui.region.bindings.height.on("change", resize_zone);
     // clear
     ui.on("clear_drawpad", drawPad.clear.bind(drawPad));
 

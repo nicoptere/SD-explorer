@@ -12,7 +12,7 @@ import UpscaleTab from "./ui/UpscaleTab";
 import ImageAndRegionPanel from "./ui/ImageAndRegionPanel";
 let pane;
 export default class UI extends EventEmitter {
-  constructor(panelId = "#App") {
+  constructor(panelId = "#Inference") {
     super();
 
     const panel = document.querySelector(panelId);
@@ -24,7 +24,7 @@ export default class UI extends EventEmitter {
     });
     panel.style.removeProperty("position");
 
-    const container = panel.querySelector(".settings-contents");
+    const container = panel.querySelector(".panel-contents");
     pane = new Pane({ container });
     pane.registerPlugin(TextareaPlugin);
     pane.registerPlugin(EssentialsPlugin);
@@ -34,10 +34,10 @@ export default class UI extends EventEmitter {
     const tab = pane
       .addTab({
         pages: [
-          { title: "inference" },
-          { title: "img2img" },
-          { title: "inpainting" },
-          { title: "upscale" },
+          { title: CONFIG.settings.icons["inference"] },
+          { title: CONFIG.settings.icons["img2img"] },
+          { title: CONFIG.settings.icons["inpainting"] },
+          { title: CONFIG.settings.icons["upscale"] },
         ],
       })
       .on("select", (e) => {
@@ -47,6 +47,7 @@ export default class UI extends EventEmitter {
 
     //to copy /paste prompts
     this.clipboard = "";
+
     // params
     this.inference = new InferenceTab(this);
     this.img2img = new ImageToImageTab(this);
@@ -83,6 +84,22 @@ export default class UI extends EventEmitter {
     }
     pane.refresh();
     this.addKeyboardShortcuts();
+  }
+
+  // return the config object to be passed to Node
+  getConfig(object) {
+    let cfg = Object.assign({}, object);
+    cfg = Object.assign(cfg, this.region);
+    if (object.field != undefined) {
+      cfg.prompt = object.field.value.trim();
+    }
+    //clean up
+    for (let key in cfg) {
+      if (typeof cfg[key] === "function" || typeof cfg[key] === "object") {
+        delete cfg[key];
+      }
+    }
+    return cfg;
   }
 
   addTab(folder, object) {
@@ -215,22 +232,6 @@ export default class UI extends EventEmitter {
       });
     group.value = 0;
     return group;
-  }
-
-  // return the config object to be passed to Node
-  getConfig(object) {
-    let cfg = Object.assign({}, object);
-    cfg = Object.assign(cfg, this.region);
-    if (object.field != undefined) {
-      cfg.prompt = object.field.value.trim();
-    }
-    //clean up
-    for (let key in cfg) {
-      if (typeof cfg[key] === "function" || typeof cfg[key] === "object") {
-        delete cfg[key];
-      }
-    }
-    return cfg;
   }
 
   // add shortcut leeter
