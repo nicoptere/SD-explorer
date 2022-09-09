@@ -157,8 +157,9 @@ function callUpscale(data) {
   if (debug) console.log("node: upscale data", data);
 
   // call upscale
+  const name = "upscale-"+Date.now()+ (data.enhance_face?'-gfp':'')
   upscale(
-    data.name,
+    name,
     data.enhance_face,
     data.scale,
     data.model,

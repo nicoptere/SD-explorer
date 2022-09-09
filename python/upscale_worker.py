@@ -31,7 +31,11 @@ def upscale(name, face_enhance=True, outscale=4, model_name='RealESRGAN_x4plus')
 
     # determine models according to model names
     model_name = model_name.split('.')[0]
-    if model_name in ['RealESRGAN_x4plus', 'RealESRNet_x4plus']:  # x4 RRDBNet model
+
+
+
+
+    if model_name in ['RealESRGAN_x4plus', 'RealESRNet_x4plus', 'hr-paintings_g']:  # x4 RRDBNet model
         model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,
                         num_block=23, num_grow_ch=32, scale=4)
         netscale = 4
