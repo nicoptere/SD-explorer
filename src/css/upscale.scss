@@ -1,0 +1,31 @@
+.upscale {
+  z-index: 100;
+  display: inline-block;
+  /* position: absolute; */
+  position: fixed;
+  top: 48px;
+  right: 48px;
+  border: 0;
+  width: auto;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 16px solid rgba(0, 0, 0, 0.025);
+  padding-bottom: 0;
+  .resizable {
+    background-color: #303030;
+    resize: both;
+    overflow: auto;
+    width: 512px;
+    height: 512px;
+  }
+  .preview {
+    pointer-events: none;
+    user-select: none;
+  }
+  .size {
+    padding-left: 16px;
+    user-select: none;
+    pointer-events: none;
+    display: inline-block;
+    color: white;
+  }
+}

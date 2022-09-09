@@ -1,0 +1,73 @@
+/* tweakpane */
+:root {
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  --tp-button-background-color: white;
+  --bld-us: 36px;
+  --tp-blade-unit-size: 30px;
+}
+
+.tp-lblv_l {
+}
+.tp-lblv_v {
+  flex-grow: 1;
+  line-height: 24px;
+}
+.tp-btnv_b,
+.tp-tbiv_b {
+  background-color: white;
+  font-size: 36px;
+  padding: 4px;
+  line-height: 36px;
+  height: 36px;
+}
+.tp-btnv_t,
+.tp-tbiv_t {
+  color: rgb(77, 77, 77);
+  font-size: 22px;
+  height: 32px;
+  line-height: 32px;
+  font-family: Material Symbols Outlined;
+}
+
+/* draggable panel */
+
+.panel-draggable {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  color: white;
+  background-color: #4b4b4b;
+  cursor: move;
+  z-index: 100;
+  display: block;
+  width: 320px;
+  height: fit-content;
+  color: #000;
+  border-radius: 6px;
+  /* transform: translate(); */
+}
+.panel-contents {
+  display: block;
+  position: absolute;
+  top: 32px;
+  cursor: auto;
+  user-select: none;
+  width: 100%;
+}
+.label {
+  pointer-events: none;
+  color: white;
+  font-size: 16px;
+  position: absolute;
+  top: 6px;
+  left: 32px;
+}
+.picto {
+  pointer-events: none;
+  font-family: Material Symbols Outlined;
+  font-size: 20px;
+  line-height: 32px;
+  height: 32px;
+  color: white;
+  padding-left: 8px;
+}
