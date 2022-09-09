@@ -18,7 +18,7 @@ def upscale(name, face_enhance=True, outscale=4, model_name='RealESRGAN_x4plus')
     outscale = int(outscale)
     input = TMP_FOLDER + "upscale-tmp.jpg"
 
-    output = ROOT_FOLDER
+    output = ROOT_FOLDER + "upscale/"
     suffix = ""
     if face_enhance == True:
         suffix = '-gfp'
