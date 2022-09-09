@@ -53,6 +53,7 @@ export default class App {
       switch (index) {
         case 0:
         case 1:
+          drawPad.show();
           break;
         case 2:
           drawPad.show();
@@ -130,7 +131,20 @@ export default class App {
 
       //save the cropped image and call the img2img function:
       // crop and convert to Blob
+      const r = region.rect;
       const image = crop(this.source, region.rect);
+      image.ctx.drawImage(
+        drawPad.canvas,
+        r.x,
+        r.y,
+        r.width,
+        r.height,
+        0,
+        0,
+        r.width,
+        r.height
+      );
+      drawPad.ctx.clearRect(r.x, r.y, r.width, r.height);
       image.toBlob(
         (blob) => {
           // tell node to save to disk

@@ -63,11 +63,17 @@
   left: 32px;
 }
 .picto {
+  display: inline;
   pointer-events: none;
   font-family: Material Symbols Outlined;
-  font-size: 20px;
+  // font-size: 20px;
   line-height: 32px;
   height: 32px;
   color: white;
   padding-left: 8px;
+}
+.right {
+  cursor: pointer;
+  position: absolute;
+  right: 8px;
 }

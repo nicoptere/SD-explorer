@@ -11,10 +11,12 @@ import PreviewPanel from "./panels/PreviewPanel";
 export default class UI extends EventEmitter {
   constructor() {
     super();
-    const image = new ImagePanel("inset: 498px auto auto 32px; width:320px;");
-    const draw = new DrawingPanel("inset: 264px auto auto 32px; width:320px;");
+    const image = new ImagePanel("inset: 246px auto auto 33px; width:320px;");
+    const draw = new DrawingPanel("inset: 607px auto auto 32px; width:320px;");
     const settings = new TabsPanel("inset: 32px auto auto 32px; width:320px;");
-    const prompt = new PromptPanel("inset: 28px auto auto 374px; width:512px;");
+    const prompt = new PromptPanel(
+      "inset: 685px auto auto 492px; width:512px;"
+    );
     // const preview = new PreviewPanel(
     //   "inset: 32px auto auto 32px; width:calc( 100% - 64px );"
     // );

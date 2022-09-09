@@ -13,6 +13,7 @@ export default class Panel extends EventEmitter {
     const str = `<div style="${style}" class="panel-draggable">
         <div class="picto">${icon}</div>
         <div class="label">${label}</div>
+        <div class="picto right">visibility</div>
         <div class="panel-contents"></div>
     </div>`;
 

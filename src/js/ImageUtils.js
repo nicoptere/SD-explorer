@@ -15,6 +15,7 @@ export function crop(imageOrCanvas, rect) {
   ctx.canvas.width = w;
   ctx.canvas.height = h;
   ctx.drawImage(imageOrCanvas, x, y, w, h, 0, 0, w, h);
+  canvas.ctx = ctx;
   return canvas;
 }
 

@@ -15,6 +15,8 @@ export default class DrawingPad {
     this.resetBrush();
 
     //listen to changes in the params
+    settings.bindings.alpha.on("change", this.resetBrush.bind(this));
+    settings.bindings.color.on("change", this.resetBrush.bind(this));
     settings.bindings.size.on("change", this.resetBrush.bind(this));
     settings.bindings.softness.on("change", this.resetBrush.bind(this));
 
@@ -62,12 +64,18 @@ export default class DrawingPad {
   resetBrush() {
     let soft = 1 - this.brush.softness;
     let size = this.brush.size;
+    let color = this.brush.color;
+    console.log(color);
+    let lastColor = color.split(",");
+    lastColor[lastColor.length - 1] = "0)";
+    lastColor = lastColor.join(",");
+
     let alpha = this.brush.alpha;
     let r = size / 2;
     this.brush.pattern = this.ctx.createRadialGradient(r, r, 0, r, r, r);
-    this.brush.pattern.addColorStop(0, `rgba(255,255,255,1`);
-    this.brush.pattern.addColorStop(soft, `rgba(255,255,255,${alpha})`);
-    this.brush.pattern.addColorStop(1, `rgba(255,255,255,0)`);
+    this.brush.pattern.addColorStop(0, color);
+    this.brush.pattern.addColorStop(soft * 0.5, color);
+    this.brush.pattern.addColorStop(1, lastColor);
   }
 
   update(e) {
@@ -84,7 +92,6 @@ export default class DrawingPad {
     this.ctx.fillStyle = this.brush.pattern;
     this.ctx.globalAlpha = this.brush.alpha;
     this.ctx.save();
-    this.ctx.globalCompositeOperation = "lighten";
     this.ctx.translate(x, y);
     this.ctx.fillRect(0, 0, size, size);
     this.ctx.restore();
