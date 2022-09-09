@@ -1,10 +1,13 @@
 node_modules
 results
-python/__pycache__
+
+**/__pycache__
+
 python/models
 package-lock.json
 
 dist/assets/index.js
+dist/assets/css/style.css
 
 trash
 src/js/Drawing.js

@@ -1,6 +1,21 @@
 
 import os
+import sys
 import torch
+
+
+def augmentPath():
+    sys.path.append('python')
+    sys.path.append('python/img2prompt/')
+    sys.path.append('python/img2prompt/configs')
+    sys.path.append('python/img2prompt/data')
+    sys.path.append('python/img2prompt/models')
+    sys.path.append('python/img2prompt/transform')
+
+augmentPath()
+# from  inference import StableDiffusionPipeline
+
+# from models.blip import blip_decoder
 
 
 DEBUG = True
@@ -33,7 +48,6 @@ DEVICE = Device()
     torch_dtype=torch.float16,
     use_auth_token=True
 """
-
 # creates a folder to store the images
 
 ROOT_FOLDER = "results/"

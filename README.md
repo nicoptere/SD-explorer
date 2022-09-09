@@ -18,6 +18,7 @@ you'll find all the background information and interactive exampless on the [hug
 - NB the diffuser lib requires user to login to huggingface and accept the license terms of the Stable diffusion model (see [the model card](https://huggingface.co/CompVis/stable-diffusion-v1-4))
 - Python 3.X (I use 3.9.5 on Windows) + PIP
 - NodeJS and NPM
+- a fair amount of space (~10Go+) to store all the models
 
 in other words, if you managed to run the [huggingface diffusers](https://github.com/huggingface/diffusers) locally, from a CLI, you should be good to go. if not, I can't really help as the setup varies immensely between machines, OS, CUDA and Python version.
 
@@ -32,9 +33,18 @@ pip install gfpgan==0.2.4
 
 feel free to install more models from the [REALESRGAN model zoo](https://upscale.wiki/wiki/Model_Database#Paper.2FOfficial_Models), make sure to save them into the `python/models/` folder.
 
-**warning:**
+#### depth inference
 
-> I removed the **NSFW filter** on the _img2img.py_ because it returns empty images if it considers the content unsafe. this means that if you provide🔞prompts, the model **will deliver🔞contents**.
+if you want to compute the depth of an image (to perform the inpainting), you 'll need to install MidAs
+
+#### image to prompts
+
+the [clip-interrogator](https://github.com/pharmapsychotic/clip-interrogator) let's you drag drop image onto the prompt field and get a prompt to generate similar images.
+it requires CLIP and BLIP, you should also [download this model](https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model*_base_caption.pth) to ***"python/models/model__base_caption.pth"***  as the asterix (*) prevents it from downloading automatically on Windows...
+
+#### **warning:**
+
+> I removed the **NSFW filter** as it sometimes returns empty images. this means that if you provide🔞prompts, the model **will deliver🔞contents**.
 > consider yourself warned.
 
 #### run!
@@ -47,7 +57,7 @@ run the server with `npm start` or `npm run sd `or `node server.js`
 
 open a web browser and got to `http://localhost:8080/ `
 
-to test on another device (mobile, tablet), set your LAN IP in the server.js file.
+to test on another device (mobile, tablet), set [your LAN IP](https://www.poftut.com/how-to-find-my-router-ip-address-on-windows-linux-macosx-android-ios-iphone-chromeos-operating-systems/) in the server.js file.
 
 ## overview
 
@@ -83,4 +93,13 @@ feedbacks welcome :)
 
 ## UI
 
-all the functionalities are packed in a single GUI, the parameters vary depending on what you want to do.
+all the functionalities split across different panels single GUI, the parameters vary depending on what you want to do.
+
+resources
+
+- image to prompt
+  - [GitHub - pharmapsychotic/clip-interrogator](https://github.com/pharmapsychotic/clip-interrogator)
+  - [GitHub - salesforce/BLIP: PyTorch code for BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation](https://github.com/salesforce/BLIP)
+- prompting
+  - [https://lexica.art/](https://lexica.art/) let's you explore visually the effect of certain keywords
+  - [https://github.com/JD-P/simulacra-aesthetic-captions](https://github.com/JD-P/simulacra-aesthetic-captions) prompts database

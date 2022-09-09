@@ -4,7 +4,8 @@ from torch import autocast
 import os
 
 # import shared settings
-from python.common import DEVICE, ROOT_FOLDER, DEBUG, sanitize
+from python.common import DEVICE, ROOT_FOLDER, DEBUG, sanitize, augmentPath
+augmentPath()
 
 # inference
 from python.inference import StableDiffusionPipeline
