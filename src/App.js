@@ -6,6 +6,7 @@ import UI from "./js/UI";
 import Region from "./js/Region";
 import { crop, saveCanvas } from "./js/ImageUtils";
 import UpscalePreview from "./js/UpscalePreview";
+import DrawingPad from "./js/DrawingPad";
 
 let canvas, socket, region, ui, history, drawPad, upscale;
 
@@ -36,8 +37,8 @@ export default class App {
     region = new Region(ui);
     ui.on("resize_region", region.resize.bind(region));
 
-    // draw area for inpainting
-    drawPad = region.drawPad;
+    // draw canvas for inpainting
+    drawPad = new DrawingPad(ui);
 
     // undo (/redo?)
     history = new History(canvas, ui);

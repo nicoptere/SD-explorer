@@ -57,7 +57,10 @@ export default class TabsPanel extends Panel {
     this.upscale = {
       enhance_face: true,
       scale,
-      model: "RealESRGAN_x4plus", //TODO model choice ?
+      model: {
+        value: "real",
+        options: { real: "RealESRGAN_x4plus", paint: "hr-paintings_g" },
+      }, //TODO model choice ? ça va casser
       actions: {
         type: "grid",
         play_arrow: () => {
@@ -105,6 +108,6 @@ export default class TabsPanel extends Panel {
       }
     });
 
-    this.grow(3);
+    this.layout();
   }
 }

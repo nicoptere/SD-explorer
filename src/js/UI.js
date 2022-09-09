@@ -1,21 +1,12 @@
-import { Pane } from "tweakpane";
-import * as TextareaPlugin from "@pangenerator/tweakpane-textarea-plugin";
-import * as EssentialsPlugin from "@tweakpane/plugin-essentials";
 import { EventEmitter } from "eventemitter3";
 import { Prompter } from "./Prompter";
-import Draggable from "draggable";
 import { CONFIG } from "./Config";
-import InferenceTab from "./ui/InferenceTab";
-import ImageToImageTab from "./ui/ImageToImageTab";
-import InpaintingTab from "./ui/InpaintingTab";
-import UpscaleTab from "./ui/UpscaleTab";
-import ImageAndRegionPanel from "./ui/ImageAndRegionPanel";
-let pane;
 
 import PromptPanel from "./panels/PromptPanel";
 import DrawingPanel from "./panels/DrawingPanel";
 import TabsPanel from "./panels/TabsPanel";
 import ImagePanel from "./panels/ImagePanel";
+import PreviewPanel from "./panels/PreviewPanel";
 
 export default class UI extends EventEmitter {
   constructor() {
@@ -24,6 +15,9 @@ export default class UI extends EventEmitter {
     const draw = new DrawingPanel("inset: 264px auto auto 32px; width:320px;");
     const settings = new TabsPanel("inset: 32px auto auto 32px; width:320px;");
     const prompt = new PromptPanel("inset: 28px auto auto 374px; width:512px;");
+    // const preview = new PreviewPanel(
+    //   "inset: 32px auto auto 32px; width:calc( 100% - 64px );"
+    // );
 
     // store references
     this.image = image;
@@ -91,24 +85,25 @@ export default class UI extends EventEmitter {
       this.emit("save_canvas");
     });
 
-    //randomize prompts
-
     //filter & randomizes the prompts
     if (CONFIG.settings.promptKeyword != null) {
       Prompter.filter(CONFIG.settings.promptKeyword); //
     }
-    this.prompt.field.value = Prompter.next();
+    this.prompt.text = Prompter.next();
     if (CONFIG.settings.randomizePrompts === true) {
       Prompter.randomize();
-      this.prompt.field.value = Prompter.random();
+      this.prompt.text = Prompter.random();
     }
+
+    // keyboard bindings
+    this.addKeyboardShortcuts();
   }
 
   // return the config object to be passed to Node
   getConfig(object) {
     let cfg = Object.assign({}, object);
     cfg = Object.assign(cfg, this.region);
-    cfg.prompt = this.prompt.field.value.trim();
+    cfg.prompt = this.prompt.text.trim();
     cfg.width = this.image.region.width;
     cfg.height = this.image.region.height;
 
@@ -119,5 +114,41 @@ export default class UI extends EventEmitter {
       }
     }
     return cfg;
+  }
+
+  //keyboard
+  addKeyboardShortcuts() {
+    window.addEventListener("keydown", (e) => {
+      //prevents shortcuts when editing text
+      const focus = this.prompt.field === document.activeElement;
+      if (focus) return;
+
+      switch (e.key) {
+        case "z":
+          if (e.ctrlKey) this.emit("undo");
+          break;
+
+        case CONFIG.settings.keymap.inference.compute:
+          this.emit("inference", this.inference);
+          break;
+        case CONFIG.settings.keymap.inference.randomize:
+          this.emit("randomize", this.inference);
+          break;
+
+        case CONFIG.settings.keymap.img2img.compute:
+          this.emit("img2img", this.img2img);
+          break;
+        case CONFIG.settings.keymap.img2img.randomize:
+          this.emit("randomize", this.img2img);
+          break;
+
+        case CONFIG.settings.keymap.inpainting.compute:
+          this.emit("inpainting", this.inpainting);
+          break;
+        case CONFIG.settings.keymap.inpainting.randomize:
+          this.emit("randomize", this.inpainting);
+          break;
+      }
+    });
   }
 }

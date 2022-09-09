@@ -3,7 +3,7 @@ import { copyImage, pasteImage, saveImage } from "./ImageUtils";
 let upscale, preview, size;
 export default class UpscalePreview {
   constructor() {
-    upscale = document.querySelector("#upscale");
+    upscale = document.querySelector(".upscale");
     const men = upscale.querySelector(".menu");
     const d = new Draggable(upscale, {
       filterTarget: (e) => {
@@ -13,14 +13,13 @@ export default class UpscalePreview {
     upscale.style.removeProperty("position");
     upscale.style.removeProperty("width");
     upscale.style.removeProperty("height");
-
-    preview = upscale.querySelector(".upscale-preview");
+    preview = upscale.querySelector(".preview");
     preview.scale = 1;
     preview.onload = () => {
       this.applyScale();
     };
 
-    size = men.querySelector(".upscale-size");
+    size = upscale.querySelector(".size");
     const drag = men.querySelector(".drag");
     const copy = men.querySelector(".copy");
     const zoomin = men.querySelector(".zoom-in");

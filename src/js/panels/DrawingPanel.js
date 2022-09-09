@@ -10,11 +10,14 @@ export default class DrawingPanel extends Panel {
 
     // this.color = "rgba(214,214,214,1)";
     // this.addInput(this, "color");
+
     this.size = brush_size;
     this.addInput(this, "size");
+
     this.softness = unit;
     this.softness.value = 0.5;
     this.addInput(this, "softness");
+
     this.alpha = unit;
     this.alpha.value = 1;
     this.addInput(this, "alpha");

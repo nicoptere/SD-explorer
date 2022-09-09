@@ -1,35 +1,29 @@
 import Draggable from "draggable";
-import DrawingPad from "./DrawingPad";
 let throbber, drag, rect;
-let SPACE = false;
+let CTRL = false;
 export default class Region {
   constructor(ui) {
     throbber = document.getElementById("throbber");
     drag = document.getElementById("drag");
-    this.draggable = new Draggable(drag, {
-      // TODO update limits on resize
+    rect = document.getElementById("region");
+    new Draggable(drag, {
       limit: {
-        x: [256, 4096],
-        y: [256 + 12, 4096],
+        x: [256],
+        y: [256 + 12],
       },
       filterTarget: (e) => {
-        return e == drag || ui.tabIndex != 2 || SPACE == false;
+        return e == drag || ui.tabIndex != 2 || CTRL == false;
       },
     });
     drag.style.removeProperty("position");
 
-    rect = document.getElementById("region");
-
-    // draw canvas for inpainting
-    this.drawPad = new DrawingPad(ui);
-
     window.addEventListener("keydown", (e) => {
-      SPACE = e.key == " ";
-      this.drawPad.locked = !SPACE;
+      CTRL = e.ctrlKey;
+      if (CTRL === true) drag.style.pointerEvents = "none";
     });
-    window.addEventListener("keyup", () => {
-      SPACE = false;
-      this.drawPad.locked = !SPACE;
+    window.addEventListener("keyup", (e) => {
+      CTRL = e.ctrlKey;
+      if (CTRL === false) drag.style.pointerEvents = "all";
     });
   }
 
@@ -56,12 +50,7 @@ export default class Region {
     rect.style.height = v + "px";
   }
   resize(w, h) {
-    // console.log("resize", w, h);
     this.width = w;
     this.height = h;
-    // this.draggable.limit = {
-    //   x: [0, w - 24],
-    //   y: [12, h - 24],
-    // };
   }
 }

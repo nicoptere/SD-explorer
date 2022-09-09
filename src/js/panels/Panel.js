@@ -37,22 +37,12 @@ export default class Panel extends EventEmitter {
     this.bindings = {};
   }
 
-  grow(value = 1) {
-    // let els = this.element.querySelectorAll(".tp-lblv_l");
-    // for (let e of els) {
-    //   e.style.flex = "unset";
-    // }
-    let els = this.element.querySelectorAll(".tp-lblv_v");
-    for (let e of els) {
-      e.style.flexGrow = value;
-    }
-  }
-
   addInput(object, key) {
     if (key === "pane" || key === "bindings") return;
+
     if (key === "color") {
       let control = object.pane.addInput(object, "color", {
-        picker: "inline",
+        // picker: "inline",
         // expanded: true,
       });
       object.bindings[key] = control;
@@ -86,6 +76,7 @@ export default class Panel extends EventEmitter {
   }
 
   addTextArea(
+    pane,
     object,
     key = "prompt",
     lineCount = 6,
@@ -97,11 +88,23 @@ export default class Panel extends EventEmitter {
       lineCount,
       placeholder,
     };
-    let field = this.pane.addInput(object, key, cfg);
+    let field = pane.addInput(object, key, cfg);
     // store a path to the input textarea Element ( holy shit!!! )
     object.field = field.controller_.valueController.view.inputElement;
     object.field.style.fontSize = 15 + "px";
     object.field.style.lineHeight = 17 + "px";
+    return object.field;
+  }
+
+  grow(value = 1) {
+    // let els = this.element.querySelectorAll(".tp-lblv_l");
+    // for (let e of els) {
+    //   e.style.flex = "unset";
+    // }
+    let els = this.element.querySelectorAll(".tp-lblv_v");
+    for (let e of els) {
+      e.style.flexGrow = value;
+    }
   }
 
   buttonGrid(folder, params) {
@@ -167,5 +170,13 @@ export default class Panel extends EventEmitter {
       shortcut = " (" + CONFIG.settings.keymap[folder.title][key] + ")";
     }
     return shortcut;
+  }
+
+  layout() {
+    this.grow(1);
+    const els = this.element.querySelectorAll(".tp-lblv_l");
+    for (let e of els) {
+      e.parentNode.removeChild(e);
+    }
   }
 }
