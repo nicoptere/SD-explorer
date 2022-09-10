@@ -66,6 +66,9 @@ export default class TabsPanel extends Panel {
         play_arrow: () => {
           this.emit("upscale");
         },
+        visibility: () => {
+          this.emit("show_upscale");
+        },
         save: () => {
           this.emit("save_upscale");
         },

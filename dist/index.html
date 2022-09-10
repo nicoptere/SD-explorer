@@ -5,11 +5,13 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,1,-25"
     />
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/viewer.css" />
   </head>
 
   <body>
     <div id="drag">
       <div class="icon drag region-drag"></div>
+      <div>press CTRL to drag</div>
       <div class="region-border">
         <div id="region">
           <div id="throbber" class="hidden" draggable="false">
@@ -25,19 +27,26 @@
     </div>
 
     <div class="upscale">
+      <img
+        class="preview hidden"
+        src="upscale\inf-Lilith,-ada-Lovelace-portrait,-Deadpool,-gothic,-artstation,-oil-on-canvas_54_12.77_1_512_512-gfp.jpg"
+        alt="upscale"
+      />
+    </div>
+
+    <!-- <div class="upscale hidden">
       <div class="resizable" draggable="false">
         <img class="preview" draggable="false" />
       </div>
       <div class="menu" draggable="false">
         <div class="icon drag"></div>
         <div class="icon copy"></div>
-        <!-- <div class="icon paste"></div> -->
         <div class="icon zoom-in"></div>
         <div class="icon zoom-out"></div>
         <div class="icon save"></div>
         <div class="size"></div>
       </div>
-    </div>
+    </div> -->
 
     <script src="assets/index.js"></script>
 

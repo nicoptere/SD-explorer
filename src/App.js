@@ -44,7 +44,7 @@ export default class App {
     history = new History(canvas, ui);
 
     //upscale preview
-    upscale = new UpscalePreview();
+    upscale = new UpscalePreview(ui, canvas.element);
 
     // manage tab change
     ui.on("tab_change", (index) => {

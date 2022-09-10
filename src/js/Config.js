@@ -10,6 +10,7 @@ export const CONFIG = {
     "clear",
     "undo",
     "save_canvas",
+    "show_upscale",
     "save_upscale",
   ],
 

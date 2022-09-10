@@ -5,14 +5,12 @@ import App from "./App";
 // import AnimatedContent from "./AnimatedContent";
 import "./css/index.scss";
 
-import { getContext } from "./js/ImageUtils";
-
 let explorer, animation;
 export default class Index {
   constructor() {
+    // Then, show the image by clicking it, or call `viewer.show()`.
     // simple editor
     explorer = new App();
-
     // //use an animation as the source
     // animation = new AnimatedContent(explorer);
   }

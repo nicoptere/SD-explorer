@@ -1,7 +1,54 @@
+import Viewer from "viewerjs";
 import Draggable from "draggable";
 import { copyImage, pasteImage, saveImage } from "./ImageUtils";
-let upscale, preview, size;
+let upscale, viewer, preview, size;
 export default class UpscalePreview {
+  constructor(ui) {
+    upscale = document.querySelector(".upscale");
+    preview = upscale.querySelector(".preview");
+    viewer = new Viewer(upscale, {
+      inline: true,
+      viewed() {
+        viewer.zoomTo(1);
+      },
+      ready() {
+        console.log("ready");
+        // remove unused viewer buttons
+        [".viewer-prev", ".viewer-play", ".viewer-next"].forEach((name) => {
+          const e = document.querySelector(name);
+          e.parentNode.removeChild(e);
+        });
+      },
+      navbar: false,
+      rotatable: false,
+    });
+
+    viewer.hide(true);
+
+    ui.on("show_upscale", this.show.bind(this));
+  }
+  save() {
+    saveImage(preview, "upscale");
+  }
+  setSource(src) {
+    preview.setAttribute("src", null);
+    preview.setAttribute("src", src);
+    this.show();
+  }
+  show() {
+    preview.classList.remove("hidden");
+    viewer.show();
+    viewer.full();
+    preview.classList.add("hidden");
+  }
+  hide() {
+    viewer.exit();
+    viewer.hide();
+    preview.classList.add("hidden");
+  }
+}
+
+/*
   constructor() {
     upscale = document.querySelector(".upscale");
     const men = upscale.querySelector(".menu");
@@ -43,11 +90,9 @@ export default class UpscalePreview {
     //   pasteImage(e, this.setSource.bind(this));
     // });
     this.hide();
+    
   }
 
-  save() {
-    saveImage(preview, "upscale");
-  }
 
   applyScale = () => {
     const w = Math.max(preview.naturalWidth, 512);
@@ -61,14 +106,4 @@ export default class UpscalePreview {
       w + " * " + h + " (scale:" + preview.scale.toFixed(2) + ")";
   };
 
-  setSource(src) {
-    preview.setAttribute("src", null);
-    preview.setAttribute("src", src);
-  }
-  show() {
-    upscale.classList.remove("hidden");
-  }
-  hide() {
-    upscale.classList.add("hidden");
-  }
-}
+    //*/
