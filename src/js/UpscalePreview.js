@@ -1,49 +1,80 @@
 import Viewer from "viewerjs";
-import Draggable from "draggable";
 import { copyImage, pasteImage, saveImage } from "./ImageUtils";
-let upscale, viewer, preview, size;
+let upscale, viewer, preview, image, container;
 export default class UpscalePreview {
   constructor(ui) {
     upscale = document.querySelector(".upscale");
     preview = upscale.querySelector(".preview");
+
+    const scope = this;
     viewer = new Viewer(upscale, {
       inline: true,
       viewed() {
         viewer.zoomTo(1);
       },
       ready() {
-        console.log("ready");
-        // remove unused viewer buttons
-        [".viewer-prev", ".viewer-play", ".viewer-next"].forEach((name) => {
-          const e = document.querySelector(name);
-          e.parentNode.removeChild(e);
-        });
+        scope.cleanup();
+        viewer.hide(true);
       },
       navbar: false,
+      scalable: false,
       rotatable: false,
     });
+    console.log(viewer);
 
-    viewer.hide(true);
+    preview.onload = () => {
+      this.url = preview.src;
+      this.show();
+    };
+
+    // TODO hidden on close
 
     ui.on("show_upscale", this.show.bind(this));
   }
+
+  cleanup() {
+    // remove unused viewer buttons
+    [".viewer-prev", ".viewer-play", ".viewer-next"].forEach((name) => {
+      const els = document.querySelectorAll(name);
+      for (let e of els) {
+        e.parentNode.removeChild(e);
+      }
+    });
+  }
+
   save() {
     saveImage(preview, "upscale");
   }
+
   setSource(src) {
+    console.log("set source", src);
+
     preview.setAttribute("src", null);
     preview.setAttribute("src", src);
-    this.show();
+
+    image = document.querySelector(".viewer-canvas").children[0];
+    image.setAttribute("src", null);
+    image.setAttribute("src", src);
   }
   show() {
+    console.log("show");
+
+    container = document.querySelector(".viewer-container");
+    if (container != undefined) container.classList.remove("hidden");
+    if (image != undefined) image.classList.remove("hidden");
     preview.classList.remove("hidden");
     viewer.show();
     viewer.full();
     preview.classList.add("hidden");
+    viewer.zoomTo(1);
   }
+
   hide() {
     viewer.exit();
     viewer.hide();
+    container = document.querySelector(".viewer-container");
+    if (container != undefined) container.classList.add("hidden");
+    if (image != undefined) image.classList.add("hidden");
     preview.classList.add("hidden");
   }
 }

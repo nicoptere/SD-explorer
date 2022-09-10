@@ -12,6 +12,14 @@ body {
   background-size: 64px 64px;
   background-repeat: repeat;
 }
+
+.hidden {
+  pointer-events: none;
+  display: none;
+  visibility: hidden;
+  user-select: none;
+}
+
 /* ------------- */
 .main-canvas {
   position: absolute;

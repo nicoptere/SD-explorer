@@ -28,6 +28,7 @@ export default class DrawingPad {
     mc.on("panstart pan panend", (e) => {
       this.update(e);
     });
+
     // this._locked = true;
     this.hide();
   }

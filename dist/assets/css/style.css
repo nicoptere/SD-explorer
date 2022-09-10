@@ -106,11 +106,6 @@
   transform: translate(-50%, -50%);
 }
 
-.hidden {
-  display: none;
-  visibility: hidden;
-}
-
 #drag {
   z-index: 50;
   position: absolute;
@@ -134,6 +129,13 @@ body {
   background-image: url("../images/tactile_noise.webp");
   background-size: 64px 64px;
   background-repeat: repeat;
+}
+
+.hidden {
+  pointer-events: none;
+  display: none;
+  visibility: hidden;
+  user-select: none;
 }
 
 /* ------------- */

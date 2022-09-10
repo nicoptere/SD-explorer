@@ -24,14 +24,14 @@ export default class App {
     //background canvas
     canvas = new Canvas(width, height);
 
-    //default source is the working canvas
-    this.source = canvas.element;
-
     ui.on("resize_canvas", canvas.resize.bind(canvas));
     ui.on("canvas_color", canvas.setClearColor.bind(canvas));
-    canvas.setClearColor(ui.image.canvas.color);
     ui.on("canvas_grain", canvas.setGrain.bind(canvas));
+    canvas.setClearColor(ui.image.canvas.color);
     canvas.grain = ui.image.canvas.grain;
+
+    //default source is the working canvas
+    this.source = canvas.element;
 
     //draggable area
     region = new Region(ui);
@@ -59,7 +59,7 @@ export default class App {
           drawPad.show();
           break;
         case 3:
-          upscale.show();
+          // upscale.show();
           break;
         default:
           return;
@@ -106,7 +106,9 @@ export default class App {
       locked = false;
     });
     socket.on("upscale_ready", (data) => {
+      console.log("upscale ready");
       upscale.setSource(data.value);
+
       region.hideThrobber();
       locked = false;
     });
