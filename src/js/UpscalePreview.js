@@ -26,6 +26,7 @@ export default class UpscalePreview {
       this.url = preview.src;
       this.show();
     };
+    viewer.hide(true)
 
     // TODO hidden on close
 

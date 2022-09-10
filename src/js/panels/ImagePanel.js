@@ -4,6 +4,7 @@ import Panel from "./Panel";
 const region_size = CONFIG.settings.options.region_size;
 const canvas_size = CONFIG.settings.options.canvas_size;
 const unit = CONFIG.settings.options.unit;
+const scale = CONFIG.settings.options.scale;
 export default class ImagePanel extends Panel {
   constructor(style) {
     super(style, "aspect_ratio", "image settings");
@@ -15,9 +16,15 @@ export default class ImagePanel extends Panel {
       bindings: [],
       width: region_size,
       height: region_size,
+      column: scale,
+      row: scale,
     };
     this.addInput(this.region, "width");
     this.addInput(this.region, "height");
+    this.region.column.value = 3
+    this.addInput(this.region, "column");
+    this.region.row.value = 1
+    this.addInput(this.region, "row");
     this.pane.addSeparator();
 
     // canvas

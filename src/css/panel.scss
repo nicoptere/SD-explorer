@@ -11,6 +11,14 @@
 //   .tp-lblv_v {
 //   }
 // }
+
+div.tp-lblv.tp-v-lst.tp-v-vlst{
+  background-color: orange;
+}
+div.tp-lblv.tp-v-lst.tp-v-vlst.tp-lblv_l{
+  display: none;
+  visibility: hidden;
+}
 .tp-btngridv {
   background-color: aqua;
 }
@@ -29,7 +37,7 @@
 }
 .tp-btnv_t,
 .tp-tbiv_t {
-  color: rgb(77, 77, 77);
+  color: rgb(40,41,46);
   font-size: 22px;
   height: 32px;
   line-height: 32px;
@@ -43,7 +51,7 @@
   top: 16px;
   left: 16px;
   color: white;
-  background-color: #4b4b4b;
+  background-color: rgb(40,41,46);
   cursor: move;
   z-index: 100;
   display: block;
