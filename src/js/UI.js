@@ -102,6 +102,9 @@ export default class UI extends EventEmitter {
     cfg.width = this.image.region.width;
     cfg.height = this.image.region.height;
 
+    cfg.row = 2;
+    cfg.column = 2;
+
     //clean up
     for (let key in cfg) {
       if (typeof cfg[key] === "function" || typeof cfg[key] === "object") {

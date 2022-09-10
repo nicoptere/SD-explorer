@@ -8,7 +8,7 @@ import numpy as np
 from python.inpainting import StableDiffusionInpaintingPipeline
 
 # import shared settings
-from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize
+from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize, image_grid
 
 pipe = None
 generator = None
@@ -34,7 +34,7 @@ def init():
 
 
 @pytalk_method('inpainting')
-def inpainting(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
+def inpainting(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512, row=1, column=1):
 
     global pipe, generator, SEED, DEBUG
 
@@ -74,16 +74,20 @@ def inpainting(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
         # print("\t img_name: ", img_name)
 
     # perform image 2 image
-    with autocast("cuda"):
-        image = pipe(
-            prompt=prompt,
-            init_image=image,
-            mask_image=mask,
-            strength=strength,
-            guidance_scale=guidance,
-            generator=generator
-        )["sample"][0]
+    cmd = [prompt] * column
+    all_images = []
+    for i in range(row):
+        with autocast("cuda"):
+            images = pipe(  prompt=cmd,
+                            init_image=image,
+                            mask_image=mask,
+                            strength=strength,
+                            guidance_scale=guidance,
+                            generator=generator
+                            )["sample"]
+        all_images.extend(images)
 
     # save file to disk and return the file name
-    image.save(img_name)
+    grid = image_grid(all_images, w=w, h=h, rows=row, cols=column)
+    grid.save(img_name)
     return img_name

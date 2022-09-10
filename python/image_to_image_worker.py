@@ -6,7 +6,7 @@ from PIL import Image
 from python.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 
 # import shared settings
-from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize
+from python.common import DEVICE, ROOT_FOLDER, TMP_FOLDER, DEBUG, sanitize, image_grid
 
 pipe = None
 generator = None
@@ -31,7 +31,7 @@ def init():
 
 
 @pytalk_method('img2img')
-def img2img(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
+def img2img(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512, row=1, column=1):
 
     global pipe, generator, SEED
     image = Image.open(TMP_FOLDER + 'i2i-tmp.jpg').convert("RGB")
@@ -70,15 +70,19 @@ def img2img(prompt, strength=50, guidance=7.5, seed=-1, w=512, h=512):
         print("\t seed: ", seed)
 
     # perform image 2 image
-    with autocast("cuda"):
-        image = pipe(
-            prompt=prompt,
-            init_image=image,
-            strength=strength,
-            guidance_scale=guidance,
-            generator=generator
-        )["sample"][0]
+    cmd = [prompt] * column
+    all_images = []
+    for i in range(row):
+        with autocast("cuda"):
+            images = pipe(  prompt=cmd,
+                            init_image=image,
+                            strength=strength,
+                            guidance_scale=guidance,
+                            generator=generator
+                            )["sample"]
+        all_images.extend(images)
 
     # save file to disk and return the file name
-    image.save(img_name)
+    grid = image_grid(all_images, w=w, h=h, rows=row, cols=column)
+    grid.save(img_name)
     return img_name

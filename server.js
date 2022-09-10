@@ -81,6 +81,8 @@ function callInference(data) {
     data.seed,
     data.width,
     data.height,
+    data.row,
+    data.column,
     onDiffusionComplete
   );
 }
@@ -104,6 +106,8 @@ function callImage2Image(data) {
     data.seed,
     data.width,
     data.height,
+    data.row,
+    data.column,
     onDiffusionComplete
   );
 }
@@ -127,6 +131,8 @@ function callInpainting(data) {
     data.seed,
     data.width,
     data.height,
+    data.row,
+    data.column,
     onDiffusionComplete
   );
 }

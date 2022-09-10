@@ -1,27 +1,20 @@
 
+
 import torch
 from torch import autocast
 import os
 
 # import shared settings
-from python.common import DEVICE, ROOT_FOLDER, DEBUG, sanitize, augmentPath
+from python.common import DEVICE, ROOT_FOLDER, DEBUG, sanitize, augmentPath, image_grid
 augmentPath()
 
 # inference
 from python.inference import StableDiffusionPipeline
 
-
 SEED = -1
 pipe = None
 generator = None
 
-
-# TODO choose GPU
-# TODO merge sanitize method
-# TODO separate method call to initializes
-# TODO error messages
-# TODO add Dalle mini
-# TODO add img2 prompt
 
 # @pytalk_method('initialize')
 def init():
@@ -40,7 +33,7 @@ def init():
 
 
 @pytalk_method('inference')
-def inference(prompt, steps=50, guidance=7.5, seed=-1, w=512, h=512):
+def inference(prompt, steps=50, guidance=7.5, seed=-1, w=512, h=512, row=1, column=1):
 
     global pipe, generator, SEED
     # cast variables to the proper type (they're sent as strings)
@@ -82,14 +75,20 @@ def inference(prompt, steps=50, guidance=7.5, seed=-1, w=512, h=512):
             print("\t seed: ", seed)
 
     # perform inference
-    with autocast("cuda"):
-        image = pipe(prompt,
-                     num_inference_steps=int(steps),
-                     guidance_scale=float(guidance),
-                     generator=generator,
-                     width=int(w),
-                     height=int(h))["sample"][0]
+    cmd = [prompt] * column
+    all_images = []
+    for i in range(row):
+
+        with autocast("cuda"):
+            images = pipe(cmd,
+                          num_inference_steps=steps,
+                          guidance_scale=guidance,
+                          generator=generator,
+                          width=w,
+                          height=h)["sample"]
+        all_images.extend(images)
 
     # save file to disk and return the file name
-    image.save(img_name)
+    grid = image_grid(all_images, w=w, h=h, rows=row, cols=column)
+    grid.save(img_name)
     return img_name
