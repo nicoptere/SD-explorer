@@ -1,5 +1,17 @@
 export const CONFIG = {
-  methods: ["inference", "img2img", "inpainting", "upscale"],
+  // tab names
+  tab_names: ["inference", "img2img", "inpainting", "upscale"],
+  // events / methods names
+  methodNames: [
+    "inference",
+    "img2img",
+    "inpainting",
+    "upscale",
+    "clear",
+    "undo",
+    "save_canvas",
+    "save_upscale",
+  ],
 
   settings: {
     // init prompts
@@ -16,9 +28,9 @@ export const CONFIG = {
     // default parameters values
     options: {
       seed: {
-        value: -1,
+        value: 1,
         min: -1,
-        max: 10000,
+        max: 1e10,
         step: 1,
       },
       steps: {

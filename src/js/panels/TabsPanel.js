@@ -67,7 +67,7 @@ export default class TabsPanel extends Panel {
           this.emit("upscale");
         },
         save: () => {
-          this.emit("save");
+          this.emit("save_upscale");
         },
       },
     };
@@ -107,7 +107,7 @@ export default class TabsPanel extends Panel {
         }
       }
     });
-
-    this.layout();
+    this.grow(1);
+    // this.layout();
   }
 }

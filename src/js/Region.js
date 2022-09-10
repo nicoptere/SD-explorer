@@ -12,18 +12,18 @@ export default class Region {
         y: [256 + 12],
       },
       filterTarget: (e) => {
-        return e == drag || ui.tabIndex != 2 || CTRL == false;
+        return e == drag || CTRL == true;
       },
     });
     drag.style.removeProperty("position");
 
     window.addEventListener("keydown", (e) => {
       CTRL = e.ctrlKey;
-      if (CTRL === true) drag.style.pointerEvents = "none";
+      if (CTRL === false) drag.style.pointerEvents = "all";
     });
     window.addEventListener("keyup", (e) => {
       CTRL = e.ctrlKey;
-      if (CTRL === false) drag.style.pointerEvents = "all";
+      if (CTRL === true) drag.style.pointerEvents = "none";
     });
   }
 

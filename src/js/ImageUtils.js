@@ -4,6 +4,12 @@
 import saveAs from "file-saver";
 const JPG_QUALITY = 0.95; //TODO move to config
 
+export function getContext(w, h) {
+  const canvas = document.createElement("canvas");
+  canvas.width = w || window.innerWidth;
+  canvas.height = h || window.innerHeight;
+  return canvas.getContext("2d", { willReadFrequently: true });
+}
 // tmp vars for cropping
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");

@@ -78,7 +78,11 @@ export default class App {
     });
 
     // draws the image to canvas whenever a function is finished
-    socket.on("image_error", (data) => {});
+    socket.on("image_error", (data) => {
+      console.log("error", data.error);
+      region.hideThrobber();
+      locked = false;
+    });
     socket.on("image_ready", (data) => {
       const image = new Image();
       image.onload = () => {
@@ -96,7 +100,11 @@ export default class App {
     });
 
     // upscale
-    socket.on("upscale_error", (data) => {});
+    socket.on("upscale_error", (data) => {
+      console.log("upscale error", data.error);
+      region.hideThrobber();
+      locked = false;
+    });
     socket.on("upscale_ready", (data) => {
       upscale.setSource(data.value);
       region.hideThrobber();
@@ -230,7 +238,8 @@ export default class App {
     });
 
     // save canvas
-    ui.on("save", () => {
+    ui.on("save_canvas", () => {
+      console.log("hey");
       saveCanvas(canvas.element);
     });
   }

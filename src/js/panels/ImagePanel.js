@@ -35,7 +35,7 @@ export default class ImagePanel extends Panel {
           this.emit("clear");
         },
         save: () => {
-          this.emit("save");
+          this.emit("save_canvas");
         },
       },
     };

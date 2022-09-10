@@ -42,7 +42,7 @@ export default class PromptPanel extends Panel {
       this.emit("randomize");
     };
 
-    CONFIG.methods.forEach((name) => {
+    CONFIG.tab_names.forEach((name) => {
       const icon = CONFIG.settings.icons[name];
       buttons[icon] = () => {
         this.emit(name);

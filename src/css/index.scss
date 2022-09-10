@@ -8,14 +8,17 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-image: url("../images/background.png");
-  background-size: 16px 16px;
+  background-image: url("../images/tactile_noise.webp");
+  background-size: 64px 64px;
   background-repeat: repeat;
 }
 /* ------------- */
 .main-canvas {
-  pointer-events: none;
   position: absolute;
+  pointer-events: none;
+  background-image: url("../images/background.png");
+  background-size: 16px 16px;
+  background-repeat: repeat;
 }
 .drawpad-canvas {
   position: absolute;

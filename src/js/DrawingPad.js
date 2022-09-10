@@ -1,11 +1,12 @@
 import Hammer from "hammerjs";
 import { CONFIG } from "./Config";
+import { getContext } from "./ImageUtils";
 // TODO:
 // free drawing on the image => isolate mask blobs => send in bacth to inpainting
 export default class DrawingPad {
   constructor(ui) {
     const size = CONFIG.settings.options.canvas_size.value;
-    this.ctx = this.getContext(size, size);
+    this.ctx = getContext(size, size);
     this.canvas = this.ctx.canvas;
     this.canvas.classList.add("drawpad-canvas");
     document.body.appendChild(this.canvas);
@@ -95,12 +96,5 @@ export default class DrawingPad {
     this.ctx.translate(x, y);
     this.ctx.fillRect(0, 0, size, size);
     this.ctx.restore();
-  }
-
-  getContext(w, h) {
-    const canvas = document.createElement("canvas");
-    canvas.width = w || window.innerWidth;
-    canvas.height = h || window.innerHeight;
-    return canvas.getContext("2d", { willReadFrequently: true });
   }
 }

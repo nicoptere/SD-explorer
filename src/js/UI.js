@@ -37,25 +37,18 @@ export default class UI extends EventEmitter {
       this.emit("tab_change", e.index);
     });
 
-    CONFIG.methods.forEach((name) => {
+    CONFIG.methodNames.forEach((name) => {
       //captures clicks from all tabs
       settings.on(name, () => {
-        console.log("tabs call", this[name]);
+        // console.log("tabs call", this[name]);
         this.emit(name, this[name]);
       });
 
       // captures clicks from prompt panel
       prompt.on(name, () => {
-        console.log("prompt", this[name]);
+        // console.log("prompt call", this[name]);
         this.emit(name, this[name]);
       });
-    });
-    settings.on("undo", () => {
-      this.emit("undo");
-    });
-    settings.on("save", () => {
-      console.log("save_upscale");
-      this.emit("save_upscale");
     });
 
     // region
@@ -75,7 +68,7 @@ export default class UI extends EventEmitter {
       this.emit("resize_canvas", image.canvas.width, image.canvas.height);
     });
     image.canvas.bindings.color.on("change", (e) => {
-      this.emit("canvas_color", e.value);
+      if (e.last) this.emit("canvas_color", e.value);
     });
     image.canvas.bindings.grain.on("change", (e) => {
       if (e.last) this.emit("canvas_grain", e.value);
@@ -83,7 +76,7 @@ export default class UI extends EventEmitter {
     image.on("clear", () => {
       this.emit("clear");
     });
-    image.on("save", () => {
+    image.on("save_canvas", () => {
       this.emit("save_canvas");
     });
 
