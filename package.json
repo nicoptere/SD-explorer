@@ -4,7 +4,8 @@
   "description": "tool to explore the Stable Diffusion model",
   "main": "server.js",
   "scripts": {
-    "sd": "node server.js"
+    "sd": "node server.js",
+    "dev": "rollup -c -w"
   },
   "dependencies": {
     "@pangenerator/tweakpane-textarea-plugin": "^1.0.4",
@@ -14,13 +15,15 @@
     "draggable": "^4.2.0",
     "eventemitter3": "4.0.7",
     "express": "4.16.4",
+    "fabric": "^5.2.4",
     "file-saver": "^2.0.5",
     "hammerjs": "2.0.8",
     "pytalk-2": "2.0.0",
     "socket.io": "4.5.1",
     "socket.io-client": "^4.5.1",
     "three": "0.144.0",
-    "tweakpane": "3.1.0"
+    "tweakpane": "3.1.0",
+    "viewerjs": "^1.10.5"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
@@ -32,6 +35,7 @@
     "rollup": "^2.79.0",
     "rollup-plugin-scss": "^3.0.0",
     "rollup-plugin-terser": "7.0.2",
+    "rollup-watch": "^4.3.1",
     "sass": "^1.54.9"
   },
   "author": "Nicolas Barradeau",

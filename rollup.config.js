@@ -12,6 +12,21 @@ export default {
     name: "index",
   },
 
+  watch: {
+    chokidar: {
+      // if the chokidar option is given, rollup-watch will
+      // use it instead of fs.watch. You will need to install
+      // chokidar separately.
+      //
+      // this options object is passed to chokidar. if you
+      // don't have any options, just pass `chokidar: true`
+    },
+
+    // include and exclude govern which files to watch. by
+    // default, all dependencies will be watched
+    exclude: ["node_modules/**", "python/***", "results/***"],
+  },
+
   plugins: [
     // handles the modules from node_modules
     nodeResolve({
@@ -34,7 +49,7 @@ export default {
     scss({
       // Filename to write all styles to
       output: "dist/assets/css/style.css",
-      outputStyle: "compressed",
+      // outputStyle: "compressed",
     }),
 
     // JS minification
