@@ -1,5 +1,6 @@
 @import "./panel.scss";
 @import "./region.scss";
+@import "./brush.scss";
 // @import "./upscale.scss";
 
 html,
@@ -8,9 +9,11 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
   background-image: url("../images/tactile_noise.webp");
   background-size: 64px 64px;
   background-repeat: repeat;
+  touch-action: none;
 }
 
 .hidden {
@@ -31,41 +34,6 @@ body {
 .drawpad-canvas {
   position: absolute;
   z-index: 10;
-}
-
-/* icons */
-.menu {
-  display: inline-block;
-  width: auto;
-}
-.icon {
-  float: left;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  /* background-color: #ff0000; */
-  color: white;
-  background-size: 16px 16px;
-  background-position: 4px 4px;
-  background-repeat: no-repeat;
-}
-.drag {
-  background-image: url("../svg/move-white.svg");
-}
-.copy {
-  background-image: url("../svg/copy-white.svg");
-}
-.paste {
-  background-image: url("../svg/paste-white.svg");
-}
-.zoom-in {
-  background-image: url("../svg/magnify-plus.svg");
-}
-.zoom-out {
-  background-image: url("../svg/magnify-minus.svg");
-}
-.save {
-  background-image: url("../svg/content-save.svg");
 }
 
 /* from https://loading.io/css/ */

@@ -4,16 +4,18 @@ import { CONFIG } from "./Config";
 
 import PromptPanel from "./panels/PromptPanel";
 import DrawingPanel from "./panels/DrawingPanel";
-import TabsPanel from "./panels/TabsPanel";
+import SettingsPanel from "./panels/SettingsPanel";
 import ImagePanel from "./panels/ImagePanel";
 import PreviewPanel from "./panels/PreviewPanel";
 
 export default class UI extends EventEmitter {
   constructor() {
     super();
-    const image = new ImagePanel("inset: 246px auto auto 33px; width:320px;");
-    const draw = new DrawingPanel("inset: 607px auto auto 32px; width:320px;");
-    const settings = new TabsPanel("inset: 32px auto auto 32px; width:320px;");
+    const image = new ImagePanel("inset: 507px auto auto 1021px; width:320px;");
+    // const draw = new DrawingPanel("inset: 607px auto auto 32px; width:320px;");
+    const settings = new SettingsPanel(
+      "inset: 686px auto auto 153px; width:320px;"
+    );
     const prompt = new PromptPanel(
       "inset: 685px auto auto 492px; width:512px;"
     );
@@ -23,7 +25,7 @@ export default class UI extends EventEmitter {
 
     // store references
     this.image = image;
-    this.drawing = draw;
+    // this.drawing = draw;
     this.settings = settings;
     this.inference = settings.inference;
     this.img2img = settings.img2img;
@@ -103,7 +105,7 @@ export default class UI extends EventEmitter {
     cfg.height = this.image.region.height;
 
     cfg.column = this.image.region.column;
-    cfg.row = this.image.region.row
+    cfg.row = this.image.region.row;
 
     //clean up
     for (let key in cfg) {

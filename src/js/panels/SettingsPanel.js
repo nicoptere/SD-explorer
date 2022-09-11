@@ -7,7 +7,7 @@ const strength = CONFIG.settings.options.strength;
 const guidance = CONFIG.settings.options.guidance;
 const scale = CONFIG.settings.options.scale;
 
-export default class TabsPanel extends Panel {
+export default class SettingsPanel extends Panel {
   constructor(style) {
     super(style, "settings", "model settings");
 
@@ -58,8 +58,8 @@ export default class TabsPanel extends Panel {
       enhance_face: true,
       scale,
       model: {
-        value: "real",
-        options: { real: "RealESRGAN_x4plus", paint: "hr-paintings_g" },
+        value: "paint",
+        options: { paint: "hr-paintings_g", real: "RealESRGAN_x4plus" },
       }, //TODO model choice ? ça va casser
       actions: {
         type: "grid",
@@ -74,6 +74,7 @@ export default class TabsPanel extends Panel {
         },
       },
     };
+    this.upscale.scale.value = 4;
 
     //list
     const params = [

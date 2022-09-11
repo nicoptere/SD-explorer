@@ -20,13 +20,13 @@ export default class UpscalePreview {
       scalable: false,
       rotatable: false,
     });
-    console.log(viewer);
+    // console.log(viewer);//TODO fix
 
     preview.onload = () => {
       this.url = preview.src;
       this.show();
     };
-    viewer.hide(true)
+    viewer.hide(true);
 
     // TODO hidden on close
 

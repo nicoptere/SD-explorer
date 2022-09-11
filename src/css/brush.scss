@@ -1,0 +1,185 @@
+$w: 24px;
+$p: 4px;
+$tw: calc($w + $p * 2);
+$r: calc($tw / 2);
+$b: calc($p / 2);
+$mw: calc($w + $b * 2);
+
+$bg: rgb(40, 41, 46);
+$dark: #6a6a6a;
+$light: #505050;
+$carret: #989898;
+
+$swatch: 128px;
+.brush-settings {
+  z-index: 1000;
+
+  position: fixed;
+  top: 50%;
+  left: 4px;
+  display: block;
+
+  width: $w;
+  min-width: $w;
+  max-width: $w;
+
+  // height: 60%;
+  transform: translate(0, -50%);
+
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+
+  .color {
+    z-index: 10;
+    margin: $p;
+    width: $w;
+    height: $w;
+    .swatch {
+      border: $b solid $dark;
+      position: absolute;
+      border-radius: 50%;
+      width: $w;
+      height: $w;
+      top: 0;
+      left: 0;
+    }
+    //   clip-path: circle(50% at 50% 50%);
+    //   transition: clip-path 0.35s ease-out;
+    // }
+    // .open {
+    //   clip-path: circle(2000% at 50% 50%);
+  }
+
+  .mode {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    border-radius: $r;
+
+    width: $mw;
+    padding-bottom: $w;
+
+    .icon-holder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: auto;
+    }
+
+    .icon {
+      width: 100%;
+      height: auto;
+
+      background-color: $light;
+      color: $carret;
+
+      font-family: Material Symbols Outlined;
+      cursor: pointer;
+      font-size: large;
+      text-align: center;
+
+      transition: color 0.35s ease-out, background-color 0.35s ease-out;
+    }
+    .icon:hover,
+    .selected {
+      background-color: rgb(214, 214, 214);
+      color: $dark;
+    }
+
+    .draw {
+      padding-top: $b;
+      padding-bottom: 0;
+      border: $b solid $dark;
+      border-radius: $r $r 0 0;
+    }
+
+    .erase {
+      padding-top: 0;
+      padding-bottom: $b;
+      border: $b solid $dark;
+      border-top: none;
+      border-radius: 0 0 $r $r;
+    }
+
+    .delete {
+      width: $w;
+      height: $w;
+      border: $b solid $dark;
+      margin-top: 20px;
+      border-radius: 4px;
+    }
+  }
+
+  .sliders {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    height: auto;
+
+    .size,
+    .alpha {
+      width: 100%;
+      min-height: 100px;
+      background-color: $light;
+      border: $b solid $dark;
+      border-radius: $r;
+    }
+
+    .slider {
+      display: block;
+      background-color: $carret;
+      width: $w - $p;
+      height: $w - $p;
+      border-radius: $r;
+      left: $p;
+    }
+    .brush-value {
+      display: block;
+      position: absolute;
+      background-color: $dark;
+      top: 50%;
+      left: $w * 1.38;
+      user-select: none;
+      color: white;
+      pointer-events: none;
+      font-size: small;
+      width: auto;
+      border-radius: $p;
+      padding: $b;
+      transition: top 0.35s ease-out, opacity 0.35s ease-out;
+      opacity: 0;
+    }
+    .brush-preview {
+      pointer-events: none;
+      user-select: none;
+      position: absolute;
+      left: $w + 16px;
+
+      display: block;
+      border-radius: $r;
+      width: $swatch + 4;
+      height: $swatch + 4;
+      border: $b solid grey;
+      background-image: url("../images/background.png");
+      background-size: 16px 16px;
+      background-repeat: repeat;
+
+      opacity: 0;
+      transition: opacity 0.35s ease-out;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .swatch {
+        pointer-events: none;
+        user-select: none;
+        background-color: black;
+        display: flex;
+        width: $swatch;
+        height: $swatch;
+        border-radius: 50%;
+      }
+    }
+  }
+}

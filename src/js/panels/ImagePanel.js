@@ -21,10 +21,11 @@ export default class ImagePanel extends Panel {
     };
     this.addInput(this.region, "width");
     this.addInput(this.region, "height");
-    this.region.column.value = 3
+    this.region.column.value = 2;
     this.addInput(this.region, "column");
-    this.region.row.value = 1
+    this.region.row.value = 1;
     this.addInput(this.region, "row");
+
     this.pane.addSeparator();
 
     // canvas
