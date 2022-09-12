@@ -1,5 +1,9 @@
 # SD-explorer
 
+
+https://user-images.githubusercontent.com/123848/189598507-da2bb79f-5982-4a7e-89ea-e211299ddca3.mp4
+
+
 #### foreword
 
 this is a toy project to run the [Stable Diffusion](https://github.com/CompVis/stable-diffusion) model locally.
