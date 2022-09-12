@@ -210,6 +210,7 @@ div.tp-lblv.tp-v-lst.tp-v-vlst.tp-lblv_l {
 .brush-settings .sliders .alpha {
   width: 100%;
   min-height: 100px;
+  height: 200px;
   background-color: #505050;
   border: 2px solid #6a6a6a;
   border-radius: 16px;

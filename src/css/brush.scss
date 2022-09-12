@@ -121,6 +121,7 @@ $swatch: 128px;
     .alpha {
       width: 100%;
       min-height: 100px;
+      height: 200px;
       background-color: $light;
       border: $b solid $dark;
       border-radius: $r;
@@ -134,6 +135,7 @@ $swatch: 128px;
       border-radius: $r;
       left: $p;
     }
+
     .brush-value {
       display: block;
       position: absolute;
